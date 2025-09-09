@@ -1,3 +1,10 @@
 :host {
   display: block;
 }
+
+.draggable-card {
+  /* Evita que el navegador haga scroll/zoom al arrastrar en touch */
+  touch-action: none;
+  /* Hint para que la animación de translate sea más fluida */
+  will-change: transform;
+}
