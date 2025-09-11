@@ -9,6 +9,7 @@
   --crimson: #d7263d;   /* alerts */
   --lemon: #faf0ca;     /* soft highlight */
   --powder: #fcfffc;    /* warm white */
+  --logo-size: 160px;   /* diameter of circular logo */
 }
 
 /* Layout */
@@ -36,10 +37,30 @@
   border-radius: 999px;
   filter: blur(20px);
   opacity: 0.0; /* animated in */
+  /* Compose transforms via CSS variables to avoid conflicts with JS animations */
+  --tx: 0px;           /* translateX */
+  --ty: 0px;           /* translateY */
+  --scale: 1;          /* scale */
+  --rot: 0deg;         /* rotate */
+  transform: translate3d(var(--tx), var(--ty), 0) scale(var(--scale)) rotate(var(--rot));
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  contain: layout paint style;
+  will-change: transform, opacity;
 }
 .bg-shape.s1 { width: 180px; height: 180px; left: 8%; top: 16%; background: color-mix(in srgb, var(--cerulean) 55%, white 0%); }
 .bg-shape.s2 { width: 260px; height: 260px; right: 12%; top: 8%; background: color-mix(in srgb, var(--lemon) 80%, white 0%); }
 .bg-shape.s3 { width: 220px; height: 220px; right: 18%; bottom: 10%; background: color-mix(in srgb, var(--cerulean) 20%, var(--crimson) 25%); }
+
+/* Gentle floating/parallax animation per shape */
+.bg-shape.s1 {}
+.bg-shape.s2 {}
+.bg-shape.s3 {}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .bg-shape { animation: none; }
+}
 
 /* Card */
 .card {
@@ -74,6 +95,24 @@
 }
 
 .card-header { margin-bottom: 12px; }
+.brand { display: flex; justify-content: center; margin-bottom: 8px; }
+.brand-avatar {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  background: transparent; /* no ring, only logo */
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.26);
+}
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1.02); /* cubre leves márgenes transparentes del PNG */
+}
 .title {
   margin: 0;
   font-size: 28px;
@@ -96,7 +135,9 @@ input[type="email"], input[type="password"] {
   width: 100%;
   border-radius: 12px;
   border: 1px solid color-mix(in srgb, var(--cerulean) 18%, #cdd7de 82%);
-  padding: 12px 14px;
+  /* Do not set left padding here so Tailwind's ps-10 can take effect */
+  padding-block: 12px;
+  padding-inline-end: 14px;
   background: #ffffff;
   color: #0f1c22;
   outline: none;
@@ -152,4 +193,21 @@ input.invalid {
   width: 16px; height: 16px;
   transform: translate(-50%, -50%) scale(0);
   opacity: .65;
+}
+
+/* Splash squares (behind card) */
+.fx-splash { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 5; }
+.splash-square {
+  position: absolute;
+  left: 0; top: 0;
+  width: var(--size, 16px);
+  height: var(--size, 16px);
+  background: var(--bg, rgba(255,255,255,0.4));
+  border-radius: 6px; /* can morph during animation */
+  opacity: 1;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+  transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) scale(var(--scale, 0)) rotate(var(--rot, 0deg));
+  will-change: transform, opacity, border-radius;
+  backface-visibility: hidden;
+  mix-blend-mode: normal; /* colores más opacos, sin blending adicional */
 }
