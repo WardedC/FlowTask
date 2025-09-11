@@ -1,29 +1,37 @@
-<section class="login-wrapper">
-  <!-- Animated background shapes -->
-  <div class="bg fx-layer" aria-hidden="true">
-    <div class="bg-shape s1"></div>
-    <div class="bg-shape s2"></div>
-    <div class="bg-shape s3"></div>
-  </div>
+﻿<section class="relative grid min-h-svh place-items-center overflow-hidden p-6 bg-[#121619] bg-[radial-gradient(1200px_800px_at_80%_10%,rgba(0,117,162,0.24),transparent_60%),_radial-gradient(900px_500px_at_10%_80%,rgba(250,240,202,0.35),transparent_70%)]">
+  <!-- Splash squares layer (behind the card) -->
+  <div class="fx-splash pointer-events-none absolute inset-0" aria-hidden="true" #splash></div>
 
   <!-- Card -->
-  <div class="card login-card">
-    <header class="card-header">
-      <h1 class="title">Bienvenido</h1>
-      <p class="subtitle">Inicia sesión para continuar</p>
+  <div class="login-card relative isolate z-10 w-full max-w-md translate-y-6 rounded-2xl border border-sky-200/40 bg-[#FCFFFC] p-10 shadow-2xl shadow-black/30 opacity-0" #card>
+    <header class="mb-3 text-center">
+      <div class="mb-2 flex justify-center">
+        <div class="w-45">
+          <img src="/assets/FlowTask.png" alt="FlowTask" class="brand-logo" />
+        </div>
+      </div>
+      <h1 class="text-2xl font-semibold text-slate-900">Bienvenido a <strong class="text-[#0075A2]">FlowTask</strong></h1>
+      <p class="mt-1 text-sm text-slate-600">Inicia sesión para continuar</p>
     </header>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <div class="form-item">
-        <label for="email">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="tu@email.com"
-          [class.invalid]="submitted && form.controls['email'].invalid"
-        />
-        <div class="error">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="grid gap-4">
+      <!-- Email -->
+      <div class="form-item -translate-x-3 opacity-0">
+        <label for="email" class="mb-1 block text-xs font-medium text-slate-600">Correo electrónico</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <i class="fas fa-envelope w-4 h-4 text-slate-400"></i>
+          </div>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Ingresa tu correo electrónico"
+            class="block w-full ps-10 pr-3 py-3 text-slate-900 border border-slate-300 rounded-xl bg-white placeholder-slate-400 outline-none focus:border-[#0075A2] focus:ring-4 focus:ring-[#0075A2]/20"
+            [ngClass]="{'border-red-500 ring-4 ring-red-200 focus:ring-red-200 focus:border-red-500': submitted && form.controls['email'].invalid}"
+          />
+        </div>
+        <div class="mt-1 text-sm text-red-600">
           @if (submitted) {
             @if (form.controls['email'].errors?.['required']) { <span>El correo es obligatorio.</span> }
             @if (form.controls['email'].errors?.['email']) { <span>Formato de correo inválido.</span> }
@@ -31,16 +39,23 @@
         </div>
       </div>
 
-      <div class="form-item">
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="••••••••"
-          [class.invalid]="submitted && form.controls['password'].invalid"
-        />
-        <div class="error">
+      <!-- Password -->
+      <div class="form-item -translate-x-3 opacity-0">
+        <label for="password" class="mb-1 block text-xs font-medium text-slate-600">Contraseña</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <i class="fas fa-lock w-4 h-4 text-slate-400"></i>
+          </div>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            class="block w-full ps-10 pr-3 py-3 text-slate-900 border border-slate-300 rounded-xl bg-white placeholder-slate-400 outline-none focus:border-[#0075A2] focus:ring-4 focus:ring-[#0075A2]/20"
+            [ngClass]="{'border-red-500 ring-4 ring-red-200 focus:ring-red-200 focus:border-red-500': submitted && form.controls['password'].invalid}"
+          />
+        </div>
+        <div class="mt-1 text-sm text-red-600">
           @if (submitted) {
             @if (form.controls['password'].errors?.['required']) { <span>La contraseña es obligatoria.</span> }
             @if (form.controls['password'].errors?.['minlength']) { <span>Mínimo 6 caracteres.</span> }
@@ -48,15 +63,18 @@
         </div>
       </div>
 
-      <div class="form-row actions form-item">
-        <label class="remember">
-          <input type="checkbox" formControlName="remember" />
-          <span>Recordarme</span>
+      <!-- Actions -->
+      <div class="form-item -translate-x-3 opacity-0 flex items-center justify-between text-sm">
+        <label class="inline-flex items-center gap-2 text-slate-600">
+          <input type="checkbox" formControlName="remember" class="h-4 w-4 rounded border-slate-300 accent-[#D7263D] focus:ring-2 focus:ring-[#D7263D]/40 focus:ring-offset-1 focus:ring-offset-white" />
+          <span class="text-sm text-center ml-1">Recordarme</span>
         </label>
-        <a class="link" href="#" (click)="$event.preventDefault()">¿Olvidaste tu contraseña?</a>
+        <a class="text-[#0075A2] hover:underline" href="#" (click)="$event.preventDefault()">¿Olvidaste tu contraseña?</a>
       </div>
 
-      <button class="btn-primary" type="submit" (click)="buttonWave($event)">
+      <!-- Submit button with ripple -->
+      <button type="submit" (click)="buttonWave($event)"
+              class="btn-primary relative mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0075A2] px-4 py-3 font-semibold text-[#FCFFFC] shadow-lg shadow-sky-900/30 transition hover:brightness-105 active:translate-y-px">
         Iniciar sesión
       </button>
     </form>

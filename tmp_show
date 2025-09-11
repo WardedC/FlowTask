@@ -1,0 +1,197 @@
+:host {
+  display: block;
+}
+
+/* Palette variables (scoped to component) */
+:host {
+  --night: #121619;     /* base, dark background */
+  --cerulean: #0075a2;  /* primary */
+  --crimson: #d7263d;   /* alerts */
+  --lemon: #faf0ca;     /* soft highlight */
+  --powder: #fcfffc;    /* warm white */
+  --logo-size: 160px;   /* diameter of circular logo */
+}
+
+/* Layout */
+.login-wrapper {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(1200px 800px at 80% 10%, color-mix(in srgb, var(--cerulean) 24%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 10% 80%, color-mix(in srgb, var(--lemon) 35%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--night) 85%, #000 15%), var(--night));
+  overflow: hidden;
+}
+
+/* Background floating shapes */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.bg-shape {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(20px);
+  opacity: 0.0; /* animated in */
+  /* Compose transforms via CSS variables to avoid conflicts with JS animations */
+  --tx: 0px;           /* translateX */
+  --ty: 0px;           /* translateY */
+  --scale: 1;          /* scale */
+  --rot: 0deg;         /* rotate */
+  transform: translate3d(var(--tx), var(--ty), 0) scale(var(--scale)) rotate(var(--rot));
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  contain: layout paint style;
+  will-change: transform, opacity;
+}
+.bg-shape.s1 { width: 180px; height: 180px; left: 8%; top: 16%; background: color-mix(in srgb, var(--cerulean) 55%, white 0%); }
+.bg-shape.s2 { width: 260px; height: 260px; right: 12%; top: 8%; background: color-mix(in srgb, var(--lemon) 80%, white 0%); }
+.bg-shape.s3 { width: 220px; height: 220px; right: 18%; bottom: 10%; background: color-mix(in srgb, var(--cerulean) 20%, var(--crimson) 25%); }
+
+/* Gentle floating/parallax animation per shape */
+.bg-shape.s1 {}
+.bg-shape.s2 {}
+.bg-shape.s3 {}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .bg-shape { animation: none; }
+}
+
+/* Card */
+.card {
+  width: min(480px, 92vw);
+  background: var(--powder);
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--cerulean) 30%, #ffffff 70%);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 28px 28px 24px;
+  position: relative;
+  isolation: isolate;
+  transform: translateY(24px);
+  opacity: 0; /* animated in */
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding-top: 2px;
+  background:
+    linear-gradient(90deg, var(--cerulean), color-mix(in srgb, var(--cerulean) 40%, var(--lemon) 60%));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: .35;
+  pointer-events: none;
+}
+
+.card-header { margin-bottom: 12px; }
+.brand { display: flex; justify-content: center; margin-bottom: 8px; }
+.brand-avatar {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  background: transparent; /* no ring, only logo */
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.26);
+}
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1.02); /* cubre leves márgenes transparentes del PNG */
+}
+.title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: .3px;
+  color: #0c1a21;
+}
+.subtitle {
+  margin: 6px 0 0 0;
+  color: #3a4a54;
+  font-size: 14px;
+}
+
+/* Form */
+form { display: grid; gap: 16px; }
+.form-item { opacity: 0; transform: translateX(-12px); }
+
+label { display: block; font-size: 12px; color: #384c57; margin-bottom: 6px; }
+input[type="email"], input[type="password"] {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--cerulean) 18%, #cdd7de 82%);
+  /* Do not set left padding here so Tailwind's ps-10 can take effect */
+  padding-block: 12px;
+  padding-inline-end: 14px;
+  background: #ffffff;
+  color: #0f1c22;
+  outline: none;
+  transition: box-shadow .2s ease, border-color .2s ease, transform .08s ease;
+}
+input::placeholder { color: #7a8a93; }
+input:focus {
+  border-color: var(--cerulean);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cerulean) 20%, transparent);
+}
+input.invalid {
+  border-color: var(--crimson);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--crimson) 20%, transparent);
+}
+
+.error { color: var(--crimson); font-size: 12px; margin-top: 6px; }
+
+.actions { display: flex; align-items: center; justify-content: space-between; }
+.remember { display: inline-flex; gap: 8px; align-items: center; color: #3a4a54; font-size: 13px; }
+.remember input { accent-color: var(--cerulean); }
+.link { color: var(--cerulean); text-decoration: none; font-size: 13px; }
+.link:hover { text-decoration: underline; }
+
+.btn-primary {
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cerulean) 94%, #36a7d1 6%), var(--cerulean));
+  color: var(--powder);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 117, 162, 0.35);
+  transition: transform .08s ease, filter .2s ease, box-shadow .2s ease;
+}
+.btn-primary:hover { filter: brightness(1.05); box-shadow: 0 16px 28px rgba(0, 117, 162, 0.42); }
+.btn-primary:active { transform: translateY(1px); }
+
+/* Ripple span (created dynamically) */
+.btn-primary .ripple {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--lemon) 65%, white 35%), transparent 80%);
+  width: 16px; height: 16px;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: .65;
+}
+

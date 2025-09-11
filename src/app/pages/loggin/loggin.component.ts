@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { animate, createTimeline, stagger } from 'animejs';
@@ -63,7 +63,7 @@ export class LogginComponent implements AfterViewInit {
         const rand = (min: number, max: number) => Math.random() * (max - min) + min;
         const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
-        const count = 32; // más figuras
+        const count = 36; // mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½s figuras
         const sizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 56, 72, 96, 128, 160, 200, 240];
         const minSize = Math.min(...sizes);
         const maxSize = Math.max(...sizes);
@@ -74,45 +74,64 @@ export class LogginComponent implements AfterViewInit {
           '#FCFFFC'  // baby powder
         ];
         const squares: HTMLElement[] = [];
+        const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+        const margin = 28; // avoid leaving the viewport
+        const maxDx = sr.width / 2 - margin;
+        const maxDy = sr.height / 2 - margin;
         for (let i = 0; i < count; i++) {
           const el = document.createElement('div');
           el.className = 'splash-square';
           const size = pick(sizes);
+          const aspect = pick([1, 1, 1, 1.3, 1.6, 2.0]);
+          const orient = Math.random() < 0.5 ? 'h' : 'v';
           // Base inline styles to avoid Angular style encapsulation issues
           el.style.position = 'absolute';
           el.style.left = `${cx}px`;
           el.style.top = `${cy}px`;
-          el.style.width = `${size}px`;
-          el.style.height = `${size}px`;
+          el.style.width = orient === 'h' ? `${Math.round(size * aspect)}px` : `${size}px`;
+          el.style.height = orient === 'v' ? `${Math.round(size * aspect)}px` : `${size}px`;
           el.style.background = pick(colors);
           el.style.borderRadius = '6px';
           el.style.opacity = '1';
           el.style.boxShadow = '0 8px 22px rgba(0,0,0,0.25)';
           el.style.willChange = 'transform, opacity, border-radius';
           el.style.backfaceVisibility = 'hidden';
-          el.style.mixBlendMode = 'screen';
-          // Lateral splash vector (bias to left/right)
+          el.style.mixBlendMode = 'normal';
+          // Lateral splash con mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s distribuciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n vertical y mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s probabilidad cerca del card
           const side = Math.random() < 0.5 ? -1 : 1; // -1: left, 1: right
-          const jitter = rand(-0.22, 0.22); // mantener lateral, ~ +/-12.6deg
+          // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Ângulo principalmente lateral pero con apertura vertical notable
+          const jitter = rand(-0.9, 0.9); // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± ~51ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°
           const angle = side === 1 ? jitter : Math.PI + jitter;
-          // Mapear tamaño -> distancia (grande más cerca, pequeño más lejos)
-          const tLarge = (size - minSize) / (maxSize - minSize); // 0 pequeño, 1 grande
-          const minDist = 220; // distancia para los más grandes (cerca)
-          const maxDist = 900; // distancia para los más pequeños (lejos)
-          const baseDist = minDist + (1 - tLarge) * (maxDist - minDist); // inversamente proporcional
-          const dist = baseDist * rand(0.9, 1.15);
+          // Mapear tamaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o -> distancia (grande mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s cerca, pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s lejos)
+          const tLarge = (size - minSize) / (maxSize - minSize); // 0 pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o, 1 grande
+          // Muestreo por mezcla para concentrar cerca del card
+          const u = Math.random();
+          const near = rand(90, 180);      // mayorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a cerca
+          const mid = rand(180, 300);
+          const far = rand(300, 520);
+          let r0 = u < 0.65 ? near : (u < 0.95 ? mid : far);
+          // Ajuste por tamaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o: pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±os mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s lejos, grandes mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s cerca
+          const scaleBySize = 0.7 + (1 - tLarge) * 0.6; // 0.7..1.3
+          const dist = r0 * scaleBySize * rand(0.95, 1.1);
           let dx = Math.cos(angle) * dist;
-          let dy = Math.sin(angle) * dist * 0.38; // algo más de vertical
-          const yExtra = rand(-110, 110); // ligera expansión arriba/abajo
-          // Asegura que X nunca sea 0 (ni demasiado pequeña)
-          if (Math.abs(dx) < 1) {
-            dx = side * rand(60, 160);
+          let dy = Math.sin(angle) * dist; // permitir mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s Y
+          // Extra Y para distribuir mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s en el eje vertical
+          const yExtra = rand(-140, 140);
+          dy += yExtra;
+          // Limitar a viewport
+          dx = clamp(dx, -maxDx, maxDx);
+          dy = clamp(dy, -maxDy, maxDy);
+          // Asegura que X nunca sea ~0 (ni demasiado pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±a)
+          if (Math.abs(dx) < 6) {
+            dx = side * rand(40, 120);
           }
           // Gentle idle rotation target
-          const rotBase = rand(-45, 45); // base más marcada
+          const rotBase = rand(-45, 45); // base mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s marcada
           (el as any).dataset.dx = String(dx);
-          (el as any).dataset.dy = String(dy + yExtra);
+          (el as any).dataset.dy = String(dy);
           (el as any).dataset.rotBase = String(rotBase);
+          (el as any).dataset.x0 = String(dx);
+          (el as any).dataset.y0 = String(dy);
           (el as any).dataset.tLarge = String(tLarge);
           // initial transform vars and transform definition using CSS variables
           el.style.setProperty('--x', '0px');
@@ -124,7 +143,7 @@ export class LogginComponent implements AfterViewInit {
           squares.push(el);
         }
 
-        // Animate splash outward from behind the card
+                        // Animate splash outward from behind the card
         animate(squares, {
           '--x': (el: any) => `${parseFloat((el?.dataset?.dx || '0'))}px`,
           '--y': (el: any) => `${parseFloat((el?.dataset?.dy || '0'))}px`,
@@ -144,8 +163,8 @@ export class LogginComponent implements AfterViewInit {
               '--rot': (el: any) => {
                 const base = parseFloat((el?.dataset?.rotBase || '0'));
                 const delta = rand(18, 26); // rotación más notoria
-              return [`${base - delta}deg`, `${base + delta}deg`];
-            },
+                return [`${base - delta}deg`, `${base + delta}deg`];
+              },
               duration: () => rand(4500, 7000),
               direction: 'alternate',
               loop: true,
@@ -153,8 +172,7 @@ export class LogginComponent implements AfterViewInit {
               delay: (_el: any, i: number) => i * 60
             });
           }
-        });
-      });
+        });      });
     }
   }
 
@@ -190,3 +208,5 @@ export class LogginComponent implements AfterViewInit {
     });
   }
 }
+
+
