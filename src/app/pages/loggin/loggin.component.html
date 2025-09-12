@@ -1,12 +1,14 @@
 ﻿<section class="relative grid min-h-svh place-items-center overflow-hidden p-6 bg-[#121619] bg-[radial-gradient(1200px_800px_at_80%_10%,rgba(0,117,162,0.24),transparent_60%),_radial-gradient(900px_500px_at_10%_80%,rgba(250,240,202,0.35),transparent_70%)]">
   <!-- Splash squares layer (behind the card) -->
   <div class="fx-splash pointer-events-none absolute inset-0" aria-hidden="true" #splash></div>
+  <!-- Light blur over background behind the card -->
+  <div class="fx-blur" aria-hidden="true"></div>
 
   <!-- Card -->
-  <div class="login-card relative isolate z-10 w-full max-w-md translate-y-6 rounded-2xl border border-sky-200/40 bg-[#FCFFFC] p-10 shadow-2xl shadow-black/30 opacity-0" #card>
+  <div class="login-card relative isolate z-10 w-full max-w-[26rem] translate-y-6 rounded-2xl border border-sky-200/40 bg-[#FCFFFC] p-8 shadow-2xl shadow-black/30 opacity-0 origin-center scale-[.9]" #card>
     <header class="mb-3 text-center">
       <div class="mb-2 flex justify-center">
-        <div class="w-45">
+        <div class="w-65">
           <img src="/assets/FlowTask.png" alt="FlowTask" class="brand-logo" />
         </div>
       </div>
@@ -49,7 +51,7 @@
           <input
             id="password"
             type="password"
-            formControlName="password"
+            formControlName="password" 
             placeholder="••••••••"
             class="block w-full ps-10 pr-3 py-3 text-slate-900 border border-slate-300 rounded-xl bg-white placeholder-slate-400 outline-none focus:border-[#0075A2] focus:ring-4 focus:ring-[#0075A2]/20"
             [ngClass]="{'border-red-500 ring-4 ring-red-200 focus:ring-red-200 focus:border-red-500': submitted && form.controls['password'].invalid}"

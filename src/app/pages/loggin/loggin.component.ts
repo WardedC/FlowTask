@@ -63,28 +63,37 @@ export class LogginComponent implements AfterViewInit {
         const rand = (min: number, max: number) => Math.random() * (max - min) + min;
         const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
-        const count = 36; // mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½s figuras
-        const sizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 56, 72, 96, 128, 160, 200, 240];
-        const minSize = Math.min(...sizes);
+        const count = 100;
+const sizes = [
+  6, 6, 6, 8, 8, 8, 8, 10, 10, 10, 12, 12, 14, 14, 16, 18, 20, 24, 28, 32, 36, 40,
+  56, 72, 96, 128, 160, 200, 240
+];
+const minSize = Math.min(...sizes);
         const maxSize = Math.max(...sizes);
+        // Colores ponderados (menos probabilidad de blanco)
         const colors = [
-          '#0075A2', // cerulean
-          '#D7263D', // crimson
-          '#FAF0CA', // lemon chiffon
-          '#FCFFFC'  // baby powder
+          '#0075A2', '#0075A2', '#0075A2',
+          '#D7263D', '#D7263D', '#D7263D',
+          '#FAF0CA', '#FAF0CA',
+          '#FCFFFC'
         ];
         const squares: HTMLElement[] = [];
         const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
         const margin = 28; // avoid leaving the viewport
         const maxDx = sr.width / 2 - margin;
         const maxDy = sr.height / 2 - margin;
+        const rMaxAllowed = Math.min(maxDx, maxDy);
+        // Balance exacto: mitad izquierda, mitad derecha
+        const leftQuota = Math.floor(count / 2);
         for (let i = 0; i < count; i++) {
           const el = document.createElement('div');
           el.className = 'splash-square';
           const size = pick(sizes);
           const aspect = pick([1, 1, 1, 1.3, 1.6, 2.0]);
           const orient = Math.random() < 0.5 ? 'h' : 'v';
+          
           // Base inline styles to avoid Angular style encapsulation issues
+
           el.style.position = 'absolute';
           el.style.left = `${cx}px`;
           el.style.top = `${cy}px`;
@@ -97,42 +106,42 @@ export class LogginComponent implements AfterViewInit {
           el.style.willChange = 'transform, opacity, border-radius';
           el.style.backfaceVisibility = 'hidden';
           el.style.mixBlendMode = 'normal';
-          // Lateral splash con mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s distribuciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n vertical y mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s probabilidad cerca del card
-          const side = Math.random() < 0.5 ? -1 : 1; // -1: left, 1: right
-          // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Ângulo principalmente lateral pero con apertura vertical notable
-          const jitter = rand(-0.9, 0.9); // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± ~51ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°
-          const angle = side === 1 ? jitter : Math.PI + jitter;
-          // Mapear tamaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o -> distancia (grande mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s cerca, pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s lejos)
-          const tLarge = (size - minSize) / (maxSize - minSize); // 0 pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o, 1 grande
-          // Muestreo por mezcla para concentrar cerca del card
-          const u = Math.random();
-          const near = rand(90, 180);      // mayorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a cerca
-          const mid = rand(180, 300);
-          const far = rand(300, 520);
-          let r0 = u < 0.65 ? near : (u < 0.95 ? mid : far);
-          // Ajuste por tamaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±o: pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±os mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s lejos, grandes mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s cerca
-          const scaleBySize = 0.7 + (1 - tLarge) * 0.6; // 0.7..1.3
-          const dist = r0 * scaleBySize * rand(0.95, 1.1);
-          let dx = Math.cos(angle) * dist;
-          let dy = Math.sin(angle) * dist; // permitir mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s Y
-          // Extra Y para distribuir mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s en el eje vertical
-          const yExtra = rand(-140, 140);
-          dy += yExtra;
-          // Limitar a viewport
-          dx = clamp(dx, -maxDx, maxDx);
-          dy = clamp(dy, -maxDy, maxDy);
-          // Asegura que X nunca sea ~0 (ni demasiado pequeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±a)
-          if (Math.abs(dx) < 6) {
-            dx = side * rand(40, 120);
+          const side = i < leftQuota ? -1 : 1; // -1: izquierda, 1: derecha
+          const angle = side === 1
+            ? rand(-Math.PI / 2, Math.PI / 2)         // hemisferio derecho (cos > 0)
+            : rand(Math.PI / 2, 3 * Math.PI / 2);     // hemisferio izquierdo (cos < 0)
+          const tLarge = (size - minSize) / (maxSize - minSize); // 0 pequeño, 1 grande
+          const isSmall = size < 96; // pequeñas rotan; >=96 no rotan
+          const rInner = Math.max(80, rMaxAllowed * 0.28);
+          const rMid   = Math.max(rInner + 40, rMaxAllowed * 0.52);
+          const rMax   = rMaxAllowed;
+          let rBase: number;
+          if (isSmall) {
+            // Pequeños con sesgo fuerte al anillo exterior
+            rBase = rMid + (rMax - rMid) * Math.pow(Math.random(), 0.35);
+          } else {
+            // Grandes concentrados entre interior y medio
+            const u = Math.random();
+            rBase = u < 0.4
+              ? rInner + (rMid - rInner) * Math.pow(Math.random(), 1.2)
+              : rMid + (rMax - rMid) * Math.pow(Math.random(), 0.9);
           }
+          let dist = (rBase + Math.pow(1 - tLarge, 1.2) * (rMax - rMid) * 0.5) * rand(1.02, 1.18);
+          if (isSmall) { dist *= 1.12; }
+          let dx = Math.cos(angle) * dist;
+          let dy = Math.sin(angle) * dist;
+          dx = Math.max(-maxDx, Math.min(maxDx, dx));
+          dy = Math.max(-maxDy, Math.min(maxDy, dy));
+          if (Math.abs(dx) < 6) { dx = dx < 0 ? -6 : 6; }
           // Gentle idle rotation target
-          const rotBase = rand(-45, 45); // base mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s marcada
+          const rotBase = rand(-45, 45); // base marcada
           (el as any).dataset.dx = String(dx);
           (el as any).dataset.dy = String(dy);
           (el as any).dataset.rotBase = String(rotBase);
           (el as any).dataset.x0 = String(dx);
           (el as any).dataset.y0 = String(dy);
           (el as any).dataset.tLarge = String(tLarge);
+          (el as any).dataset.size = String(size);
           // initial transform vars and transform definition using CSS variables
           el.style.setProperty('--x', '0px');
           el.style.setProperty('--y', '0px');
@@ -158,19 +167,17 @@ export class LogginComponent implements AfterViewInit {
           delay: () => rand(0, 400),
           ease: 'outElastic(1, .6)',
           complete: () => {
-            // Gentle idle rotation after splash
-            animate(squares, {
-              '--rot': (el: any) => {
-                const base = parseFloat((el?.dataset?.rotBase || '0'));
-                const delta = rand(18, 26); // rotación más notoria
-                return [`${base - delta}deg`, `${base + delta}deg`];
-              },
-              duration: () => rand(4500, 7000),
-              direction: 'alternate',
-              loop: true,
-              ease: 'inOutSine',
-              delay: (_el: any, i: number) => i * 60
-            });
+            // Rotación continua solo para pequeñas (<96)
+            const smallSquares = squares.filter(el => parseFloat((el as any).dataset?.size || '0') < 96);
+            if (smallSquares.length) {
+              animate(smallSquares, {
+                '--rot': '+=360deg',
+                duration: () => rand(14000, 22000),
+                loop: true,
+                ease: 'linear',
+                delay: (_el: any, i: number) => i * 45
+              });
+            }
           }
         });      });
     }
@@ -208,5 +215,6 @@ export class LogginComponent implements AfterViewInit {
     });
   }
 }
+
 
 
