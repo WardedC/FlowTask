@@ -84,6 +84,7 @@
 .login-card {
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 14px 30px rgba(0, 0, 0, 0.32);
   transition: box-shadow .2s ease, transform .2s ease;
+  transform-style: preserve-3d;
 }
 
 /* (removed) full-screen blur layer */
@@ -231,4 +232,24 @@ input.invalid {
   will-change: transform, opacity, border-radius;
   backface-visibility: hidden;
   mix-blend-mode: normal; /* colores más opacos, sin blending adicional */
+}
+
+/* 3D scene for card flip */
+.login-scene { perspective: 1200px; -webkit-perspective: 1200px; perspective-origin: 50% 40%; }
+.login-card { transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
+.login-card > .front-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(1px);
+}
+
+/* Flip/registration panel */
+.register-panel {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: rotateY(180deg);
+  z-index: 2;
+  will-change: transform, opacity;
 }

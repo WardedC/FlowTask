@@ -17,6 +17,7 @@ export class LogginComponent implements AfterViewInit {
     remember: FormControl<boolean>;
   }>;
   submitted = false;
+  private registerMode = false;
 
   @ViewChild('splash', { static: false }) splashRef!: ElementRef<HTMLElement>;
   @ViewChild('card', { static: false }) cardRef!: ElementRef<HTMLElement>;
@@ -63,7 +64,7 @@ export class LogginComponent implements AfterViewInit {
         const rand = (min: number, max: number) => Math.random() * (max - min) + min;
         const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
-        const count = 100;
+        const count = 70;
 const sizes = [
   6, 6, 6, 8, 8, 8, 8, 10, 10, 10, 12, 12, 14, 14, 16, 18, 20, 24, 28, 32, 36, 40,
   56, 72, 96, 128, 160, 200, 240
@@ -152,7 +153,7 @@ const minSize = Math.min(...sizes);
           squares.push(el);
         }
 
-                        // Animate splash outward from behind the card
+
         animate(squares, {
           '--x': (el: any) => `${parseFloat((el?.dataset?.dx || '0'))}px`,
           '--y': (el: any) => `${parseFloat((el?.dataset?.dy || '0'))}px`,
@@ -193,6 +194,45 @@ const minSize = Math.min(...sizes);
     }
     // Replace with real auth logic
     // console.log('auth', this.form.value);
+  }
+
+  toggleRegister(ev?: Event): void {
+    ev?.preventDefault();
+    const card = this.cardRef?.nativeElement;
+    if (!card) return;
+    const panel = card.querySelector('.register-panel') as HTMLElement | null;
+    const front = card.querySelector('.front-face') as HTMLElement | null;
+    const direction = this.registerMode ? [180, 0] as [number, number] : [0, 180] as [number, number];
+    this.registerMode = !this.registerMode;
+    // Flip animation on the card
+    animate(card, {
+      rotateY: direction,
+      duration: 650,
+      ease: 'inOutCubic'
+    });
+    // Crossfade panels
+    if (panel) {
+      animate(panel, {
+        opacity: this.registerMode ? [0, 1] : [1, 0],
+        duration: 450,
+        delay: this.registerMode ? 220 : 0,
+        ease: 'inOutCubic',
+        begin: () => {
+          if (this.registerMode) {
+            panel.style.pointerEvents = 'auto';
+            if (front) front.style.pointerEvents = 'none';
+          } else {
+            if (front) front.style.pointerEvents = '';
+          }
+        },
+        complete: () => {
+          if (!this.registerMode) {
+            panel.style.pointerEvents = 'none';
+            if (front) front.style.pointerEvents = '';
+          }
+        }
+      });
+    }
   }
 
   buttonWave(ev: MouseEvent): void {
