@@ -2,8 +2,6 @@
 @import "tailwindcss";
 @import "flowbite/src/themes/default";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
-/* @plugin "flowbite/plugin";
-@source "../node_modules/flowbite"; */
 
 /* FlowTask - Paleta de Colores Mejorada */
 :root {
@@ -46,6 +44,30 @@
   --ft-shadow-violet: 0 4px 20px rgba(106, 76, 147, 0.15);
   --ft-shadow-amber: 0 4px 20px rgba(255, 180, 0, 0.15);
   --ft-shadow-turquoise: 0 4px 20px rgba(46, 196, 182, 0.15);
+}
+
+/* Dark mode styles */
+.dark {
+  /* Variables para modo oscuro */
+  --ft-bg-primary: #0f172a;
+  --ft-bg-card: #1e293b;
+  --ft-text-primary: #f8fafc;
+  --ft-text-secondary: #cbd5e1;
+  --ft-bg-glass: rgba(30, 41, 59, 0.1);
+  
+  /* Sombras para modo oscuro */
+  --ft-shadow-cerulean: 0 4px 20px rgba(0, 117, 162, 0.25);
+  --ft-shadow-violet: 0 4px 20px rgba(106, 76, 147, 0.25);
+  --ft-shadow-amber: 0 4px 20px rgba(255, 180, 0, 0.25);
+  --ft-shadow-turquoise: 0 4px 20px rgba(46, 196, 182, 0.25);
+}
+
+/* Light mode explicit (default) */
+:root:not(.dark) {
+  --ft-bg-primary: #fdfcf8;
+  --ft-bg-card: #ffffff;
+  --ft-text-primary: #1f2937;
+  --ft-text-secondary: #6b7280;
 }
 
 /* Utilidades globales */
