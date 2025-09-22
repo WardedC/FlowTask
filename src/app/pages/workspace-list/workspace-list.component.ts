@@ -1,18 +1,28 @@
-import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, ElementRef, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, createTimeline, stagger } from 'animejs';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { ThemeService } from '../../service/theme.service';
+
+interface Workspace {
+  id: number;
+  name: string;
+  description: string;
+  theme: string;
+  icon: string;
+  taskCount: number;
+  isFavorite: boolean;
+}
 
 @Component({
-  selector: 'app-home',
-  imports: [CommonModule, RouterLink, FormsModule, RouterOutlet],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  selector: 'app-workspace-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './workspace-list.component.html',
+  styleUrl: './workspace-list.component.css'
 })
-export class HomeComponent implements AfterViewInit {
-  viewMode: 'grid' | 'list' = 'grid';
+export class WorkspaceListComponent implements AfterViewInit {
+viewMode: 'grid' | 'list' = 'grid';
   user = { name: 'Edward', initial: 'E' };
   menuOpen = false;
   isLoading = false; // Para mostrar loading states
@@ -224,12 +234,10 @@ export class HomeComponent implements AfterViewInit {
   
   currentMessage = this.welcomeMessages[Math.floor(Math.random() * this.welcomeMessages.length)];
 
-  constructor(private host: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef, private themeService: ThemeService) {
-    // Suscribirse al estado del tema
-    this.themeService.isDarkMode$.subscribe(isDark => {
-      this.isDarkMode = isDark;
-      this.cdr.detectChanges();
-    });
+  constructor(private host: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef, private router: Router, private route: ActivatedRoute) {
+    // Inicializar el modo dark desde localStorage o usar light por defecto
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    this.applyTheme();
   }
 
   ngAfterViewInit(): void {
@@ -519,9 +527,47 @@ export class HomeComponent implements AfterViewInit {
   toggleDarkMode(event?: Event): void {
     if (event) {
       const target = event.target as HTMLInputElement;
-      this.themeService.setTheme(target.checked);
+      this.isDarkMode = target.checked;
     } else {
-      this.themeService.toggleTheme();
+      this.isDarkMode = !this.isDarkMode;
     }
+    
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    console.log('Dark mode toggled:', this.isDarkMode);
+    this.applyTheme();
+    // Force change detection
+    this.cdr.detectChanges();
+  }
+
+  private applyTheme(): void {
+    const html = document.documentElement;
+    const body = document.body;
+    
+    // Remove any existing classes first
+    html.classList.remove('dark', 'light');
+    body.classList.remove('dark', 'light');
+    
+    if (this.isDarkMode) {
+      html.classList.add('dark');
+      body.classList.add('dark');
+      console.log('Dark mode applied');
+    } else {
+      html.classList.add('light');
+      body.classList.add('light');
+      console.log('Light mode applied');
+    }
+    
+    // Force change detection after DOM update
+    setTimeout(() => {
+      console.log('HTML classes:', html.className);
+      console.log('Body classes:', body.className);
+      console.log('isDarkMode state:', this.isDarkMode);
+      this.cdr.detectChanges();
+    }, 100);
+  }
+
+  // Método para navegar al workspace específico
+  openWorkspace(workspaceId: string): void {
+    this.router.navigateByUrl(`/home/workspaces/${workspaceId}`);
   }
 }
