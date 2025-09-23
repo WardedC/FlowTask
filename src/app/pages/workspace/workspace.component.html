@@ -66,8 +66,17 @@
                 <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Boards del Proyecto</h2>
               </div>
               <div class="flex items-center space-x-2">
-                <div class="w-2 h-2 bg-[#2EC4B6] rounded-full animate-pulse"></div>
-                <span class="text-gray-600 dark:text-gray-400 text-xs font-medium">Actualizando</span>
+                <button 
+                  #addBoardBtn
+                  (click)="onAddNewBoard()"
+                  (mouseenter)="onAddBoardHover($event)"
+                  (mouseleave)="onAddBoardLeave($event)"
+                  class="flex items-center px-4 py-2.5 text-sm font-bold text-white bg-[#2EC4B6] hover:bg-[#26a69a] rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                  <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2.5">
+                    <i class="fas fa-plus text-xs text-white"></i>
+                  </div>
+                  <span>Nuevo Board</span>
+                </button>
               </div>
             </div>
           </div>
@@ -75,149 +84,13 @@
           <div class="p-6">
             <div class="space-y-5">
               
-              <!-- Board 1 - Desarrollo -->
-              <div #boardCard class="animate-element group p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-blue-500 hover:shadow-lg transition-all duration-300"
-                   (mouseenter)="onBoardHoverEnter($event)" (mouseleave)="onBoardHoverLeave($event)">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <i class="fas fa-code text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-bold text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)] transition-colors duration-200">Board Desarrollo</h3>
-                      <p class="text-xs text-gray-500 dark:text-gray-400">Sprint actual en progreso</p>
-                    </div>
-                  </div>
-                  <button class="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors duration-200">
-                    Ver Board
-                  </button>
-                </div>
-                
-                <!-- Progress Bar -->
-                <div class="mb-3">
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-gray-600 dark:text-gray-400">Progreso del Sprint</span>
-                    <span class="font-bold text-blue-600 dark:text-blue-400">75%</span>
-                  </div>
-                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2.5 rounded-full transition-all duration-500" style="width: 75%"></div>
-                  </div>
-                </div>
-                
-                <!-- Estadísticas -->
-                <div class="flex justify-between text-xs">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center text-green-600 dark:text-green-400">
-                      <i class="fas fa-check-circle mr-1"></i>
-                      <strong>12 </strong> Completadas
-                    </span>
-                    <span class="flex items-center text-orange-600 dark:text-orange-400">
-                      <i class="fas fa-clock mr-1"></i>
-                      <strong>4 </strong> Pendientes
-                    </span>
-                  </div>
-                  <span class="text-gray-500 dark:text-gray-400">Total: <strong>16</strong></span>
-                </div>
-              </div>
+              <!-- Tarjetas de board animadas -->
+              <app-animated-board-card 
+                *ngFor="let boardData of boardCardsData; let i = index; trackBy: trackByBoardTitle"
+                [data]="boardData"
+                [animationDelay]="i * 100">
+              </app-animated-board-card>
               
-              <!-- Board 2 - Diseño -->
-              <div #boardCard class="animate-element group p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-purple-500 hover:shadow-lg transition-all duration-300"
-                   (mouseenter)="onBoardHoverEnter($event)" (mouseleave)="onBoardHoverLeave($event)">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <i class="fas fa-palette text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-bold text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)] transition-colors duration-200">Board Diseño</h3>
-                      <p class="text-xs text-gray-500 dark:text-gray-400">UI/UX en proceso</p>
-                    </div>
-                  </div>
-                  <button class="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-bold rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/70 transition-colors duration-200">
-                    Ver Board
-                  </button>
-                </div>
-                
-                <!-- Progress Bar -->
-                <div class="mb-3">
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-gray-600 dark:text-gray-400">Progreso del Diseño</span>
-                    <span class="font-bold text-purple-600 dark:text-purple-400">90%</span>
-                  </div>
-                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-500" style="width: 90%"></div>
-                  </div>
-                </div>
-                
-                <!-- Estadísticas -->
-                <div class="flex justify-between text-xs">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center text-green-600 dark:text-green-400">
-                      <i class="fas fa-check-circle mr-1"></i>
-                      <strong>9</strong> Completadas
-                    </span>
-                    <span class="flex items-center text-orange-600 dark:text-orange-400">
-                      <i class="fas fa-clock mr-1"></i>
-                      <strong>1</strong> Pendiente
-                    </span>
-                  </div>
-                  <span class="text-gray-500 dark:text-gray-400">Total: <strong>10</strong></span>
-                </div>
-              </div>
-              
-              <!-- Board 3 - Testing -->
-              <div #boardCard class="animate-element group p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-emerald-500 hover:shadow-lg transition-all duration-300"
-                   (mouseenter)="onBoardHoverEnter($event)" (mouseleave)="onBoardHoverLeave($event)">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <i class="fas fa-bug text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-bold text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)] transition-colors duration-200">Board Testing</h3>
-                      <p class="text-xs text-gray-500 dark:text-gray-400">QA y pruebas</p>
-                    </div>
-                  </div>
-                  <button class="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-900/70 transition-colors duration-200">
-                    Ver Board
-                  </button>
-                </div>
-                
-                <!-- Progress Bar -->
-                <div class="mb-3">
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-gray-600 dark:text-gray-400">Progreso de Testing</span>
-                    <span class="font-bold text-emerald-600 dark:text-emerald-400">45%</span>
-                  </div>
-                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div class="bg-gradient-to-r from-emerald-500 to-green-500 h-2.5 rounded-full transition-all duration-500" style="width: 45%"></div>
-                  </div>
-                </div>
-                
-                <!-- Estadísticas -->
-                <div class="flex justify-between text-xs">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center text-green-600 dark:text-green-400">
-                      <i class="fas fa-check-circle mr-1"></i>
-                      <strong>3</strong> Completadas
-                    </span>
-                    <span class="flex items-center text-orange-600 dark:text-orange-400">
-                      <i class="fas fa-clock mr-1"></i>
-                      <strong>4</strong> Pendientes
-                    </span>
-                  </div>
-                  <span class="text-gray-500 dark:text-gray-400">Total: <strong>7</strong></span>
-                </div>
-              </div>
-              
-              <!-- Botón crear nuevo board -->
-              <div class="text-center pt-4">
-                <button class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#2EC4B6] to-[#10B981] hover:from-[#26a69a] hover:to-[#059669] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                  <i class="fas fa-plus mr-2"></i>
-                  Crear nuevo Board
-                  <i class="fas fa-layer-group ml-2"></i>
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -241,7 +114,7 @@
           <div class="p-6">
             <div class="space-y-4">
               <!-- Actividad 1 -->
-              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl hover:shadow-md transition-all duration-200"
+              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
                 <div class="w-10 h-10 bg-gradient-to-br from-[#0075A2] to-[#6A4C93] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <i class="fas fa-user text-white text-sm"></i>
@@ -253,7 +126,7 @@
               </div>
               
               <!-- Actividad 2 -->
-              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl hover:shadow-md transition-all duration-200"
+              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
                 <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <i class="fas fa-check text-white text-sm"></i>
@@ -265,7 +138,7 @@
               </div>
 
               <!-- Actividad 3 -->
-              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl hover:shadow-md transition-all duration-200"
+              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
                 <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <i class="fas fa-plus text-white text-sm"></i>
@@ -294,37 +167,37 @@
           <div class="p-6">
             <div class="space-y-4">
               <!-- Miembro 1 -->
-              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl hover:shadow-md transition-all duration-200 group"
+              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
                 <div class="w-12 h-12 bg-gradient-to-br from-[#FFB400] to-[#D7263D] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                   <span class="text-sm font-bold text-white">J</span>
                 </div>
                 <div class="flex-1">
-                  <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-orange-600 transition-colors">Juan Pérez</p>
+                  <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">Juan Pérez</p>
                   <p class="text-xs text-gray-500 dark:text-gray-400">Desarrollador Full Stack • Online</p>
                 </div>
               </div>
               
               <!-- Miembro 2 -->
-              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl hover:shadow-md transition-all duration-200 group"
+              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
                 <div class="w-12 h-12 bg-gradient-to-br from-[#0075A2] to-[#6A4C93] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                   <span class="text-sm font-bold text-white">M</span>
                 </div>
                 <div class="flex-1">
-                  <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">María García</p>
+                  <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">María García</p>
                   <p class="text-xs text-gray-500 dark:text-gray-400">UI/UX Designer • Ocupada</p>
                 </div>
               </div>
               
               <!-- Miembro 3 -->
-              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl hover:shadow-md transition-all duration-200 group"
+              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
                 <div class="w-12 h-12 bg-gradient-to-br from-[#2EC4B6] to-[#10B981] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                   <span class="text-sm font-bold text-white">E</span>
                 </div>
                 <div class="flex-1">
-                  <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors">Edward</p>
+                  <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">Edward</p>
                   <p class="text-xs text-gray-500 dark:text-gray-400">Project Manager • Muy activo</p>
                 </div>
               </div>

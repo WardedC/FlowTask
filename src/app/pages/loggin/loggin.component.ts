@@ -33,7 +33,7 @@ export class LogginComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const root = this.host.nativeElement;
 
-    // Staged entrance
+   // Staged entrance
     const tl = createTimeline({ autoplay: true });
     tl.add(root.querySelector('.login-card') as Element, {
       // Card entrance
@@ -65,11 +65,11 @@ export class LogginComponent implements AfterViewInit {
         const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
         const count = 70;
-const sizes = [
-  6, 6, 6, 8, 8, 8, 8, 10, 10, 10, 12, 12, 14, 14, 16, 18, 20, 24, 28, 32, 36, 40,
-  56, 72, 96, 128, 160, 200, 240
-];
-const minSize = Math.min(...sizes);
+        const sizes = [
+          6, 6, 6, 8, 8, 8, 8, 10, 10, 10, 12, 12, 14, 14, 16, 18, 20, 24, 28, 32, 36, 40,
+          56, 72, 96, 128, 160, 200, 240
+        ];
+        const minSize = Math.min(...sizes);
         const maxSize = Math.max(...sizes);
         // Colores ponderados (menos probabilidad de blanco)
         const colors = [

@@ -49,24 +49,46 @@ export interface StatsCardData {
       </div>
       
       <!-- Sección inferior con métricas -->
-      <div class="p-5">
-        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{{ data.description }}</p>
-        <p class="text-3xl font-bold transition-colors duration-200"
-           [ngClass]="{
-             'text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)]': data.title === 'Total',
-             'text-green-600 dark:text-green-400 group-hover:text-[#2EC4B6]': data.title === 'Listas',
-             'text-orange-600 dark:text-orange-400 group-hover:text-[#FFB400]': data.title === 'En proceso'
-           }">
-          {{ data.value }}
-        </p>
-        <div class="flex items-center mt-2">
-          <div class="w-2 h-2 rounded-full animate-pulse mr-2" 
-               [ngClass]="{
-                 'bg-[#2EC4B6]': data.title === 'Total',
-                 'bg-green-500': data.title === 'Listas',
-                 'bg-orange-500': data.title === 'En proceso'
-               }"></div>
-          <span class="text-xs text-gray-500 dark:text-gray-400">{{ data.statusText }}</span>
+      <div class="p-5 relative overflow-hidden">
+        <!-- Partículas flotantes en el fondo del body -->
+        <div #bodyParticles class="absolute inset-0 pointer-events-none" style="z-index: 1;">
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="relative" style="z-index: 2;">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{{ data.description }}</p>
+          
+          <!-- Valor principal con círculo y icono de tendencia -->
+          <div class="flex items-center justify-between mb-4">
+            <!-- Lado izquierdo: círculo + número -->
+            <div class="flex items-center space-x-3">
+              <div class="w-3 h-3 rounded-full animate-pulse" 
+                   [ngClass]="{
+                     'bg-[#2EC4B6]': data.title === 'Total',
+                     'bg-green-500': data.title === 'Completadas',
+                     'bg-orange-500': data.title === 'En proceso'
+                   }"></div>
+              <p #valueNumber class="text-3xl font-bold transition-colors duration-200"
+                 [ngClass]="{
+                   'text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)]': data.title === 'Total',
+                   'text-green-600 dark:text-green-400 group-hover:text-[#2EC4B6]': data.title === 'Completadas',
+                   'text-orange-600 dark:text-orange-400 group-hover:text-[#FFB400]': data.title === 'En proceso'
+                 }">
+                {{ data.value }}
+              </p>
+            </div>
+            
+            <!-- Lado derecho: icono de tendencia -->
+            <div class="flex items-center">
+              <i class="fas text-xl"
+                 [ngClass]="{
+                   'fa-tasks text-[#2EC4B6]': data.title === 'Total',
+                   'fa-check-circle text-green-500': data.title === 'Completadas',
+                   'fa-clock text-orange-500': data.title === 'En proceso'
+                 }"></i>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -111,6 +133,21 @@ export interface StatsCardData {
     .group {
       transition: all 0.3s ease;
     }
+
+    /* Estilos para partículas del body */
+    .body-particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(0.5px);
+      will-change: transform, opacity;
+    }
+
+    /* Animación para el efecto de pulso en el número */
+    @keyframes number-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
   `]
 })
 export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -118,6 +155,8 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   @Input() animationDelay: number = 0; // Delay para animación de entrada escalonada
   @ViewChild('animationContainer', { static: false }) animationContainer!: ElementRef<HTMLElement>;
   @ViewChild('cardElement', { static: false }) cardElement!: ElementRef<HTMLElement>;
+  @ViewChild('bodyParticles', { static: false }) bodyParticles!: ElementRef<HTMLElement>;
+  @ViewChild('valueNumber', { static: false }) valueNumber!: ElementRef<HTMLElement>;
   
   private animationInstances: any[] = [];
   private shapes: HTMLElement[] = [];
@@ -161,9 +200,97 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
         easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
         complete: () => {
           cardEl.style.willChange = '';
+          // Iniciar animaciones del contenido del body después de la entrada
+          this.animateBodyContent();
         }
       });
     }, this.animationDelay);
+  }
+
+  private animateBodyContent(): void {
+    // Crear partículas flotantes
+    this.createBodyParticles();
+    
+    // Animar el número con efecto de conteo
+    this.animateValueCounter();
+  }
+
+  private createBodyParticles(): void {
+    if (!this.bodyParticles) return;
+    
+    const container = this.bodyParticles.nativeElement;
+    const particleCount = 3;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'absolute w-1 h-1 rounded-full opacity-30';
+      
+      // Color basado en el tema de la carta
+      const color = this.getParticleColor();
+      particle.style.backgroundColor = color;
+      
+      // Posición aleatoria
+      particle.style.left = Math.random() * 80 + 10 + '%';
+      particle.style.top = Math.random() * 60 + 20 + '%';
+      
+      container.appendChild(particle);
+      
+      // Animar partícula flotante
+      this.animateParticle(particle, i);
+    }
+  }
+
+  private getParticleColor(): string {
+    switch (this.data.title) {
+      case 'Total': return '#2EC4B6';
+      case 'Completadas': return '#10B981';
+      case 'En proceso': return '#F59E0B';
+      default: return '#6B7280';
+    }
+  }
+
+  private animateParticle(particle: HTMLElement, index: number): void {
+    const animateFloat = () => {
+      if (this.isDestroyed) return;
+      
+      animate(particle, {
+        translateY: [0, -10, 0],
+        translateX: [0, Math.random() * 6 - 3, 0],
+        opacity: [0.3, 0.6, 0.3],
+        scale: [1, 1.2, 1],
+        duration: 3000 + (index * 500),
+        easing: 'easeInOutSine',
+        complete: animateFloat
+      });
+    };
+    
+    setTimeout(animateFloat, index * 800);
+  }
+
+  private animateValueCounter(): void {
+    if (!this.valueNumber) return;
+    
+    const numberEl = this.valueNumber.nativeElement;
+    const targetValue = parseInt(this.data.value);
+    let currentValue = 0;
+    const duration = 1000;
+    const steps = 30;
+    const increment = targetValue / steps;
+    const stepDuration = duration / steps;
+    
+    const counter = setInterval(() => {
+      if (this.isDestroyed) {
+        clearInterval(counter);
+        return;
+      }
+      
+      currentValue += increment;
+      if (currentValue >= targetValue) {
+        currentValue = targetValue;
+        clearInterval(counter);
+      }
+      numberEl.textContent = Math.floor(currentValue).toString();
+    }, stepDuration);
   }
 
   ngOnDestroy(): void {

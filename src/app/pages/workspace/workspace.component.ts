@@ -5,11 +5,12 @@ import { Subscription } from 'rxjs';
 import { ThemeService } from '../../service/theme.service';
 import { animate, createTimeline, stagger } from 'animejs';
 import { AnimatedStatsCardComponent, StatsCardData } from '../../components/animated-stats-card/animated-stats-card.component';
+import { AnimatedBoardCardComponent, BoardCardData } from '../../components/animated-board-card/animated-board-card.component';
 
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [CommonModule, AnimatedStatsCardComponent],
+  imports: [CommonModule, AnimatedStatsCardComponent, AnimatedBoardCardComponent],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.css'
 })
@@ -36,7 +37,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       statusText: 'Actualizadas hoy'
     },
     {
-      title: 'Listas',
+      title: 'Completadas',
       value: '18',
       description: 'Tareas Completadas',
       icon: 'fa-check-circle',
@@ -65,12 +66,46 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   ];
 
+  // Datos para las tarjetas de board
+  boardCardsData: BoardCardData[] = [
+    {
+      title: 'Board Desarrollo',
+      description: 'Sprint actual en progreso',
+      icon: 'fa-code',
+      color: 'blue',
+      progress: 75,
+      completed: 12,
+      pending: 4,
+      total: 16
+    },
+    {
+      title: 'Board Diseño',
+      description: 'UI/UX en proceso',
+      icon: 'fa-palette',
+      color: 'purple',
+      progress: 90,
+      completed: 9,
+      pending: 1,
+      total: 10
+    },
+    {
+      title: 'Board Testing',
+      description: 'QA y pruebas',
+      icon: 'fa-bug',
+      color: 'emerald',
+      progress: 45,
+      completed: 3,
+      pending: 4,
+      total: 7
+    }
+  ];
+
   // ViewChildren para animaciones
   @ViewChildren('statsCard') statsCards!: QueryList<ElementRef>;
-  @ViewChildren('boardCard') boardCards!: QueryList<ElementRef>;
   @ViewChildren('activityItem') activityItems!: QueryList<ElementRef>;
   @ViewChildren('teamMember') teamMembers!: QueryList<ElementRef>;
   @ViewChildren('contentCard') contentCards!: QueryList<ElementRef>;
+  @ViewChildren('addBoardBtn') addBoardBtn!: QueryList<ElementRef>;
 
   constructor(
     private route: ActivatedRoute,
@@ -133,7 +168,6 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
     // Desactivar animaciones automáticas en todas las cartas
     const allElements = [
       ...(this.statsCards?.toArray().map(r => r.nativeElement) ?? []),
-      ...(this.boardCards?.toArray().map(r => r.nativeElement) ?? []),
       ...(this.activityItems?.toArray().map(r => r.nativeElement) ?? []),
       ...(this.teamMembers?.toArray().map(r => r.nativeElement) ?? []),
       ...(this.contentCards?.toArray().map(r => r.nativeElement) ?? [])
@@ -182,27 +216,27 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
-    // Animar board cards
-    const boardElements = this.boardCards?.toArray().map(r => r.nativeElement) ?? [];
-    if (boardElements.length) {
-      boardElements.forEach((el) => {
+    // Animar el botón de agregar board
+    const addBoardElements = this.addBoardBtn?.toArray().map(r => r.nativeElement) ?? [];
+    if (addBoardElements.length) {
+      addBoardElements.forEach((el) => {
         el.style.animation = 'none';
         el.style.opacity = '0';
-        el.style.transform = 'translateY(20px) scale(0.96)';
+        el.style.transform = 'translateX(20px) scale(0.9)';
         el.style.transformOrigin = '50% 50%';
         el.style.willChange = 'transform, opacity';
       });
       
-      const tl2 = createTimeline({ autoplay: true });
-      tl2.add(boardElements as any, {
+      const tlAddBoard = createTimeline({ autoplay: true });
+      tlAddBoard.add(addBoardElements as any, {
         opacity: [0, 1],
-        translateY: [20, 0],
-        scale: [0.96, 1],
-        delay: stagger(100, { start: 300 }),
-        duration: 520,
+        translateX: [20, 0],
+        scale: [0.9, 1],
+        delay: 200, // Aparece después de los content cards
+        duration: 400,
         ease: 'outCubic',
         complete: () => {
-          boardElements.forEach(el => {
+          addBoardElements.forEach(el => {
             el.style.willChange = '';
           });
         }
@@ -304,58 +338,6 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Animar el icono dentro de la carta
     const icon = target.querySelector('.card-icon i');
-    if (icon) {
-      animate(icon, {
-        scale: 1,
-        rotate: 0,
-        duration: 140,
-        ease: 'linear'
-      });
-    }
-  }
-
-  onBoardHoverEnter(ev: MouseEvent): void {
-    const target = ev.currentTarget as HTMLElement | null;
-    if (!target) return;
-    target.style.willChange = 'transform';
-    
-    // Animar la carta
-    animate(target, {
-      translateX: [0, 8],
-      scale: [1, 1.01],
-      duration: 160,
-      ease: 'linear'
-    });
-
-    // Animar el icono dentro de la carta
-    const icon = target.querySelector('.w-10.h-10 i');
-    if (icon) {
-      animate(icon, {
-        scale: [1, 1.2],
-        rotate: [0, -8],
-        duration: 160,
-        ease: 'linear'
-      });
-    }
-  }
-
-  onBoardHoverLeave(ev: MouseEvent): void {
-    const target = ev.currentTarget as HTMLElement | null;
-    if (!target) return;
-    
-    // Animar la carta
-    animate(target, {
-      translateX: 0,
-      scale: 1,
-      duration: 140,
-      ease: 'linear',
-      complete: () => {
-        target.style.willChange = '';
-      }
-    });
-
-    // Animar el icono dentro de la carta
-    const icon = target.querySelector('.w-10.h-10 i');
     if (icon) {
       animate(icon, {
         scale: 1,
@@ -471,5 +453,90 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   // Método para optimización de *ngFor
   trackByCardTitle(index: number, card: StatsCardData): string {
     return card.title;
+  }
+
+  // Método para optimización de *ngFor de boards
+  trackByBoardTitle(index: number, board: BoardCardData): string {
+    return board.title;
+  }
+
+  // Métodos para el botón de agregar nuevo board
+  onAddNewBoard(): void {
+    // Aquí iría la lógica para crear un nuevo board
+    console.log('Crear nuevo board');
+    // Ejemplo: this.boardService.createNewBoard();
+  }
+
+  onAddBoardHover(ev: MouseEvent): void {
+    const target = ev.currentTarget as HTMLElement | null;
+    if (!target) return;
+    
+    target.style.willChange = 'transform';
+    
+    // Animar el botón
+    animate(target, {
+      scale: [1, 1.05],
+      translateY: [0, -1],
+      duration: 200,
+      ease: 'outCubic'
+    });
+
+    // Animar el icono plus dentro del botón
+    const plusIcon = target.querySelector('.fa-plus');
+    if (plusIcon) {
+      animate(plusIcon, {
+        rotate: [0, 180],
+        scale: [1, 1.1],
+        duration: 300,
+        ease: 'outCubic'
+      });
+    }
+
+    // Animar el círculo de fondo del icono
+    const iconBg = target.querySelector('.w-5.h-5');
+    if (iconBg) {
+      animate(iconBg, {
+        scale: [1, 1.15],
+        duration: 200,
+        ease: 'outCubic'
+      });
+    }
+  }
+
+  onAddBoardLeave(ev: MouseEvent): void {
+    const target = ev.currentTarget as HTMLElement | null;
+    if (!target) return;
+    
+    // Animar el botón de vuelta
+    animate(target, {
+      scale: 1,
+      translateY: 0,
+      duration: 180,
+      ease: 'outCubic',
+      complete: () => {
+        target.style.willChange = '';
+      }
+    });
+
+    // Animar el icono plus de vuelta
+    const plusIcon = target.querySelector('.fa-plus');
+    if (plusIcon) {
+      animate(plusIcon, {
+        rotate: 0,
+        scale: 1,
+        duration: 250,
+        ease: 'outCubic'
+      });
+    }
+
+    // Animar el círculo de fondo del icono de vuelta
+    const iconBg = target.querySelector('.w-5.h-5');
+    if (iconBg) {
+      animate(iconBg, {
+        scale: 1,
+        duration: 180,
+        ease: 'outCubic'
+      });
+    }
   }
 }
