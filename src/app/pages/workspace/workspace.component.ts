@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../service/theme.service';
 import { animate, createTimeline, stagger } from 'animejs';
+import { AnimatedStatsCardComponent, StatsCardData } from '../../components/animated-stats-card/animated-stats-card.component';
 
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AnimatedStatsCardComponent],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.css'
 })
@@ -18,13 +19,58 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   isDarkMode: boolean = false;
   private themeSubscription: Subscription = new Subscription();
 
+  // Datos para las tarjetas de estadísticas
+  statsCardsData: StatsCardData[] = [
+    {
+      title: 'Total',
+      value: '24',
+      description: 'Total de Tareas',
+      icon: 'fa-tasks',
+      gradient: {
+        from: '#0075A2',
+        to: '#6A4C93',
+        fromDark: '#0EA5E9',
+        toDark: '#8B5CF6'
+      },
+      accentColor: '#2EC4B6',
+      statusText: 'Actualizadas hoy'
+    },
+    {
+      title: 'Listas',
+      value: '18',
+      description: 'Tareas Completadas',
+      icon: 'fa-check-circle',
+      gradient: {
+        from: '#2EC4B6',
+        to: '#10B981',
+        fromDark: '#06D6A0',
+        toDark: '#34D399'
+      },
+      accentColor: '#10B981',
+      statusText: '¡Excelente progreso!'
+    },
+    {
+      title: 'En proceso',
+      value: '6',
+      description: 'Tareas Pendientes',
+      icon: 'fa-clock',
+      gradient: {
+        from: '#FFB400',
+        to: '#F59E0B',
+        fromDark: '#FBBF24',
+        toDark: '#F59E0B'
+      },
+      accentColor: '#F59E0B',
+      statusText: '¡A por ellas!'
+    }
+  ];
+
   // ViewChildren para animaciones
   @ViewChildren('statsCard') statsCards!: QueryList<ElementRef>;
   @ViewChildren('boardCard') boardCards!: QueryList<ElementRef>;
   @ViewChildren('activityItem') activityItems!: QueryList<ElementRef>;
   @ViewChildren('teamMember') teamMembers!: QueryList<ElementRef>;
   @ViewChildren('contentCard') contentCards!: QueryList<ElementRef>;
-  @ViewChildren('cardIcon') cardIcons!: QueryList<ElementRef>;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,59 +120,66 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Animar elementos después de que la vista se inicialice
-    setTimeout(() => this.animateEntrance(), 100);
-    // Iniciar efectos de lámpara de lava en los headers después de que todo esté renderizado
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        this.initLavaLampEffects();
-      });
-    }, 1000);
+    // Desactivar cualquier animación CSS automática inmediatamente
+    this.disableAutomaticAnimations();
+    
+    // Ejecutar animaciones inmediatamente sin delay para evitar el período estático
+    requestAnimationFrame(() => {
+      this.animateEntrance();
+    });
+  }
+
+  private disableAutomaticAnimations(): void {
+    // Desactivar animaciones automáticas en todas las cartas
+    const allElements = [
+      ...(this.statsCards?.toArray().map(r => r.nativeElement) ?? []),
+      ...(this.boardCards?.toArray().map(r => r.nativeElement) ?? []),
+      ...(this.activityItems?.toArray().map(r => r.nativeElement) ?? []),
+      ...(this.teamMembers?.toArray().map(r => r.nativeElement) ?? []),
+      ...(this.contentCards?.toArray().map(r => r.nativeElement) ?? [])
+    ];
+
+    allElements.forEach(el => {
+      if (el) {
+        // Forzar desactivación de todas las animaciones CSS
+        el.style.setProperty('animation', 'none', 'important');
+        el.style.setProperty('animation-delay', '0s', 'important');
+        el.style.setProperty('animation-duration', '0s', 'important');
+        el.style.setProperty('animation-fill-mode', 'none', 'important');
+        // Asegurar que el elemento esté visible
+        el.style.setProperty('opacity', '1', 'important');
+      }
+    });
   }
 
   private animateEntrance(): void {
-    // Animar stats cards
-    const statsElements = this.statsCards?.toArray().map(r => r.nativeElement) ?? [];
-    if (statsElements.length) {
-      statsElements.forEach((el) => {
-        el.style.animation = 'none';
-        el.style.opacity = '0';
-        el.style.transformOrigin = '50% 50%';
-        el.style.willChange = 'transform, opacity';
-      });
-      
-      const tl = createTimeline({ autoplay: true });
-      tl.add(statsElements as any, {
-        opacity: [0, 1],
-        translateY: [20, 0],
-        scale: [0.96, 1],
-        delay: stagger(80),
-        duration: 520,
-        ease: 'outCubic'
-      });
-    }
-
+    // Las statsCards ahora se animan solas, no necesitamos animarlas aquí
+    
     // Animar content cards (containers principales)
     const contentElements = this.contentCards?.toArray().map(r => r.nativeElement) ?? [];
     if (contentElements.length) {
       contentElements.forEach((el) => {
         el.style.animation = 'none';
         el.style.opacity = '0';
+        el.style.transform = 'translateY(30px) scale(0.95)';
         el.style.transformOrigin = '50% 50%';
         el.style.willChange = 'transform, opacity';
       });
       
-      setTimeout(() => {
-        const tl1 = createTimeline({ autoplay: true });
-        tl1.add(contentElements as any, {
-          opacity: [0, 1],
-          translateY: [30, 0],
-          scale: [0.95, 1],
-          delay: stagger(120),
-          duration: 600,
-          ease: 'outCubic'
-        });
-      }, 150);
+      const tl1 = createTimeline({ autoplay: true });
+      tl1.add(contentElements as any, {
+        opacity: [0, 1],
+        translateY: [30, 0],
+        scale: [0.95, 1],
+        delay: stagger(120, { start: 150 }), // Delay inicial de 150ms
+        duration: 600,
+        ease: 'outCubic',
+        complete: () => {
+          contentElements.forEach(el => {
+            el.style.willChange = '';
+          });
+        }
+      });
     }
 
     // Animar board cards
@@ -135,21 +188,25 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       boardElements.forEach((el) => {
         el.style.animation = 'none';
         el.style.opacity = '0';
+        el.style.transform = 'translateY(20px) scale(0.96)';
         el.style.transformOrigin = '50% 50%';
         el.style.willChange = 'transform, opacity';
       });
       
-      setTimeout(() => {
-        const tl2 = createTimeline({ autoplay: true });
-        tl2.add(boardElements as any, {
-          opacity: [0, 1],
-          translateY: [20, 0],
-          scale: [0.96, 1],
-          delay: stagger(100),
-          duration: 520,
-          ease: 'outCubic'
-        });
-      }, 300);
+      const tl2 = createTimeline({ autoplay: true });
+      tl2.add(boardElements as any, {
+        opacity: [0, 1],
+        translateY: [20, 0],
+        scale: [0.96, 1],
+        delay: stagger(100, { start: 300 }),
+        duration: 520,
+        ease: 'outCubic',
+        complete: () => {
+          boardElements.forEach(el => {
+            el.style.willChange = '';
+          });
+        }
+      });
     }
 
     // Animar activity items
@@ -158,20 +215,24 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       activityElements.forEach((el) => {
         el.style.animation = 'none';
         el.style.opacity = '0';
+        el.style.transform = 'translateX(-20px)';
         el.style.transformOrigin = '50% 50%';
         el.style.willChange = 'transform, opacity';
       });
       
-      setTimeout(() => {
-        const tl3 = createTimeline({ autoplay: true });
-        tl3.add(activityElements as any, {
-          opacity: [0, 1],
-          translateX: [-20, 0],
-          delay: stagger(80),
-          duration: 450,
-          ease: 'outCubic'
-        });
-      }, 500);
+      const tl3 = createTimeline({ autoplay: true });
+      tl3.add(activityElements as any, {
+        opacity: [0, 1],
+        translateX: [-20, 0],
+        delay: stagger(80, { start: 500 }),
+        duration: 450,
+        ease: 'outCubic',
+        complete: () => {
+          activityElements.forEach(el => {
+            el.style.willChange = '';
+          });
+        }
+      });
     }
 
     // Animar team members
@@ -180,119 +241,26 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       teamElements.forEach((el) => {
         el.style.animation = 'none';
         el.style.opacity = '0';
+        el.style.transform = 'translateX(-15px) scale(0.98)';
         el.style.transformOrigin = '50% 50%';
         el.style.willChange = 'transform, opacity';
       });
       
-      setTimeout(() => {
-        const tl4 = createTimeline({ autoplay: true });
-        tl4.add(teamElements as any, {
-          opacity: [0, 1],
-          translateX: [-15, 0],
-          scale: [0.98, 1],
-          delay: stagger(100),
-          duration: 450,
-          ease: 'outCubic'
-        });
-      }, 650);
-    }
-  }
-
-  private initLavaLampEffects(): void {
-    // Obtener todos los headers de las stats cards
-    const statsElements = this.statsCards?.toArray().map(r => r.nativeElement) ?? [];
-    
-    if (statsElements.length === 0) {
-      console.log('No se encontraron stats cards');
-      return;
-    }
-
-    console.log(`Inicializando efectos para ${statsElements.length} cartas`);
-    
-    statsElements.forEach((card, index) => {
-      const header = card.querySelector('.relative.h-20');
-      if (header) {
-        console.log(`Creando efecto para carta ${index}`);
-        this.createLavaLampEffect(header as HTMLElement, index);
-      } else {
-        console.log(`No se encontró header para carta ${index}`);
-      }
-    });
-  }
-
-  private createLavaLampEffect(container: HTMLElement, cardIndex: number): void {
-    console.log(`Iniciando lava lamp effect para header ${cardIndex}`);
-    
-    // Asegurar que el header tenga posición relativa
-    container.style.position = 'relative';
-    container.style.overflow = 'hidden';
-    
-    const createParticle = () => {
-      if (!container || !container.parentElement) return;
-      
-      const particle = document.createElement('div');
-      
-      // Tamaño aleatorio pequeño para que se vea como burbujas
-      const size = 4 + Math.random() * 8; // 4-12px
-      
-      // Posición inicial aleatoria en el ancho del header, empezar desde abajo
-      const startX = Math.random() * (container.offsetWidth - size);
-      const startY = container.offsetHeight - 5; // Empezar cerca del fondo
-      
-      particle.style.cssText = `
-        position: absolute;
-        left: ${startX}px;
-        top: ${startY}px;
-        width: ${size}px;
-        height: ${size}px;
-        background: rgba(255, 255, 255, ${0.5 + Math.random() * 0.3});
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 5;
-        will-change: transform, opacity;
-        box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      `;
-      
-      // Agregar directamente al header
-      container.appendChild(particle);
-      console.log(`Partícula creada en header ${cardIndex} - posición (${startX}, ${startY})`);
-      
-      // Animación hacia arriba dentro del header
-      const endY = -size - 5;
-      const drift = (Math.random() - 0.5) * 15; // Deriva lateral suave
-      
-      animate(particle, {
-        translateY: [0, endY],
-        translateX: [0, drift],
-        opacity: [0.8, 0.9, 0.3, 0],
-        scale: [0.8, 1, 1.1, 0.6],
-        rotate: Math.random() * 180,
-        duration: 2500 + Math.random() * 1500, // 2.5-4 segundos
-        easing: 'easeOutCubic',
+      const tl4 = createTimeline({ autoplay: true });
+      tl4.add(teamElements as any, {
+        opacity: [0, 1],
+        translateX: [-15, 0],
+        scale: [0.98, 1],
+        delay: stagger(100, { start: 650 }),
+        duration: 450,
+        ease: 'outCubic',
         complete: () => {
-          if (particle.parentNode === container) {
-            container.removeChild(particle);
-          }
+          teamElements.forEach(el => {
+            el.style.willChange = '';
+          });
         }
       });
-    };
-    
-    // Crear partículas iniciales inmediatamente
-    createParticle();
-    setTimeout(() => createParticle(), 300);
-    setTimeout(() => createParticle(), 600);
-    
-    // Intervalo para crear partículas continuas
-    const interval = setInterval(() => {
-      if (container.parentElement) {
-        createParticle();
-      } else {
-        clearInterval(interval);
-      }
-    }, 700 + Math.random() * 500); // Cada 0.7-1.2 segundos
-    
-    console.log(`Efecto lava lamp configurado para header ${cardIndex}`);
+    }
   }
 
   // Métodos para efectos hover
@@ -498,5 +466,10 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
         ease: 'linear'
       });
     }
+  }
+
+  // Método para optimización de *ngFor
+  trackByCardTitle(index: number, card: StatsCardData): string {
+    return card.title;
   }
 }
