@@ -18,7 +18,7 @@ export interface BoardCardData {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div #cardElement class="animate-element group p-4 m-2 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
+    <div #cardElement class="animate-element group list-card bg-gray-50 dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl p-4 m-2"
          (mouseenter)="onCardHoverEnter($event)" (mouseleave)="onCardHoverLeave($event)"
          style="opacity: 0; transform: translateY(20px) scale(0.96);">
       
@@ -288,32 +288,10 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
     target.style.willChange = 'transform';
     
     animate(target, {
-      scale: [1, 1.02],
-      translateY: [0, -3],
-      duration: 120,
-      easing: 'easeOutQuad'
+      translateX: [0, 16],
+      duration: 160,
+      ease: 'linear'
     });
-
-    // Animar el icono con más dinamismo
-    const icon = target.querySelector('.w-10.h-10 i');
-    if (icon) {
-      animate(icon, {
-        scale: [1, 1.15],
-        rotate: [0, 8],
-        duration: 120,
-        easing: 'easeOutBack'
-      });
-    }
-
-    // Animar el botón con efecto de rebote
-    const button = target.querySelector('button');
-    if (button) {
-      animate(button, {
-        scale: [1, 1.08],
-        duration: 150,
-        easing: 'easeOutBack'
-      });
-    }
   }
 
   onCardHoverLeave(event: MouseEvent): void {
@@ -321,34 +299,12 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
     if (!target) return;
     
     animate(target, {
-      scale: 1,
-      translateY: 0,
-      duration: 100,
-      easing: 'easeOutQuad',
+      translateX: 0,
+      duration: 140,
+      ease: 'linear',
       complete: () => {
         target.style.willChange = '';
       }
     });
-
-    // Animar el icono de vuelta
-    const icon = target.querySelector('.w-10.h-10 i');
-    if (icon) {
-      animate(icon, {
-        scale: 1,
-        rotate: 0,
-        duration: 100,
-        easing: 'easeOutQuad'
-      });
-    }
-
-    // Animar el botón de vuelta
-    const button = target.querySelector('button');
-    if (button) {
-      animate(button, {
-        scale: 1,
-        duration: 120,
-        easing: 'easeOutQuad'
-      });
-    }
   }
 }

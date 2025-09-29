@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, createTimeline, stagger } from 'animejs';
+import { CreateModalComponent, ModalConfig, CreateItemData } from '../../components/create-modal/create-modal.component';
 
 interface Workspace {
   id: number;
@@ -17,7 +18,7 @@ interface Workspace {
 @Component({
   selector: 'app-workspace-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CreateModalComponent],
   templateUrl: './workspace-list.component.html',
   styleUrl: './workspace-list.component.css'
 })
@@ -39,6 +40,13 @@ viewMode: 'grid' | 'list' = 'grid';
     members: [] as string[]
   };
   newMemberEmail = '';
+
+  // Modal configuration for new component
+  modalConfig: ModalConfig = {
+    title: 'Crear Nuevo Workspace',
+    icon: 'fa-layer-group',
+    type: 'workspace'
+  };
   
   // Available themes for workspace creation
   availableThemes = [
@@ -335,6 +343,14 @@ viewMode: 'grid' | 'list' = 'grid';
     this.resetForm();
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
+    
+    // Reset scroll position of modal to top
+    setTimeout(() => {
+      const modalElement = document.querySelector('#create-workspace-modal');
+      if (modalElement) {
+        modalElement.scrollTop = 0;
+      }
+    }, 50);
   }
 
   closeCreateWorkspaceModal(): void {
@@ -342,6 +358,41 @@ viewMode: 'grid' | 'list' = 'grid';
     this.resetForm();
     // Restore body scroll
     document.body.style.overflow = 'auto';
+  }
+
+  // New modal component event handlers
+  onModalClosed(): void {
+    this.closeCreateWorkspaceModal();
+  }
+
+  onWorkspaceCreated(workspaceData: CreateItemData): void {
+    // Convert CreateItemData to workspace format
+    const newWorkspace = {
+      id: `ws-${Date.now()}`,
+      title: workspaceData.name,
+      desc: workspaceData.description,
+      cover: '/assets/FlowTask.png',
+      theme: workspaceData.theme,
+      themeColor: workspaceData.color,
+      icon: workspaceData.icon,
+      lastActivity: 'Recién creado',
+      tasks: {
+        total: 0,
+        completed: 0,
+        pending: 0
+      },
+      members: workspaceData.members.length,
+      boards: 0,
+      isFavorite: false
+    };
+
+    // Add to workspaces array
+    this.workspaces.push(newWorkspace);
+    
+    // Close modal
+    this.closeCreateWorkspaceModal();
+
+    console.log('Nuevo workspace creado:', newWorkspace);
   }
 
   resetForm(): void {

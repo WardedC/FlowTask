@@ -3,38 +3,29 @@
   <div class="max-w-7xl mx-auto">
     
     <!-- Header del Workspace -->
-    <div class="mb-8">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <button 
-            (click)="goBack()"
-            class="flex items-center px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
-            <i class="fas fa-arrow-left mr-2"></i>
-            Volver a Workspaces
-          </button>
-          
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg">
-              <i class="fas fa-briefcase text-white text-lg"></i>
-            </div>
-            <div>
-              <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ workspaceName }}</h1>
-              <p class="text-gray-600 dark:text-gray-400">Workspace ID: {{ workspaceId || 'Sin ID' }}</p>
-            </div>
-          </div>
+    <div class="mb-8 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg">
+          <i class="fas fa-briefcase text-white text-xl"></i>
         </div>
-        
-        <!-- Acciones del workspace -->
-        <div class="flex items-center space-x-3">
-          <button class="px-4 py-2 text-sm font-medium text-white bg-[#0075A2] hover:bg-[#005f82] rounded-xl transition-all duration-200 shadow-lg">
-            <i class="fas fa-plus mr-2"></i>
-            Nueva Tarea
-          </button>
-          <button class="px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
-            <i class="fas fa-cog mr-2"></i>
-            Configurar
-          </button>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ workspaceName }}</h1>
+          <p class="text-gray-600 dark:text-gray-400">Workspace ID: {{ workspaceId || 'Sin ID' }}</p>
         </div>
+      </div>
+      
+      <!-- Botones de acción -->
+      <div class="flex items-center space-x-3">
+        <button 
+          (click)="goBack()"
+          class="flex items-center px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
+          <i class="fas fa-arrow-left mr-2"></i>
+          Volver
+        </button>
+        <button class="px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
+          <i class="fas fa-cog mr-2"></i>
+          Configurar
+        </button>
       </div>
     </div>
 
@@ -71,7 +62,7 @@
                   (click)="onAddNewBoard()"
                   (mouseenter)="onAddBoardHover($event)"
                   (mouseleave)="onAddBoardLeave($event)"
-                  class="flex items-center px-4 py-2.5 text-sm font-bold text-white bg-[#2EC4B6] hover:bg-[#26a69a] rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                  class="flex items-center px-4 py-2.5 text-sm font-bold text-white bg-[#0075A2] hover:bg-[#005f82] rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
                   <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2.5">
                     <i class="fas fa-plus text-xs text-white"></i>
                   </div>
@@ -114,7 +105,7 @@
           <div class="p-6">
             <div class="space-y-4">
               <!-- Actividad 1 -->
-              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
+              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
                 <div class="w-10 h-10 bg-gradient-to-br from-[#0075A2] to-[#6A4C93] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <i class="fas fa-user text-white text-sm"></i>
@@ -126,7 +117,7 @@
               </div>
               
               <!-- Actividad 2 -->
-              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
+              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
                 <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <i class="fas fa-check text-white text-sm"></i>
@@ -138,7 +129,7 @@
               </div>
 
               <!-- Actividad 3 -->
-              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200"
+              <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
                 <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <i class="fas fa-plus text-white text-sm"></i>
@@ -167,7 +158,7 @@
           <div class="p-6">
             <div class="space-y-4">
               <!-- Miembro 1 -->
-              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200 group"
+              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
                 <div class="w-12 h-12 bg-gradient-to-br from-[#FFB400] to-[#D7263D] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                   <span class="text-sm font-bold text-white">J</span>
@@ -179,7 +170,7 @@
               </div>
               
               <!-- Miembro 2 -->
-              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200 group"
+              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
                 <div class="w-12 h-12 bg-gradient-to-br from-[#0075A2] to-[#6A4C93] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                   <span class="text-sm font-bold text-white">M</span>
@@ -191,7 +182,7 @@
               </div>
               
               <!-- Miembro 3 -->
-              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-200 group"
+              <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
                 <div class="w-12 h-12 bg-gradient-to-br from-[#2EC4B6] to-[#10B981] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                   <span class="text-sm font-bold text-white">E</span>
@@ -208,3 +199,14 @@
     </div>
   </div>
 </div>
+
+<!-- Modal para Crear Board usando el componente reutilizable -->
+<app-create-modal
+  [isModalOpen]="isModalOpen"
+  [config]="modalConfig"
+  [availableThemes]="availableThemes"
+  [availableIcons]="availableIcons"
+  [colorPresets]="colorPresets"
+  (modalClosed)="closeCreateBoardModal()"
+  (itemCreated)="onBoardCreated($event)">
+</app-create-modal>

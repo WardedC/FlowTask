@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, createTimeline, stagger } from 'animejs';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ThemeService } from '../../service/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -11,12 +12,13 @@ import { ThemeService } from '../../service/theme.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements AfterViewInit, OnDestroy {
   viewMode: 'grid' | 'list' = 'grid';
   user = { name: 'Edward', initial: 'E' };
   menuOpen = false;
   isLoading = false; // Para mostrar loading states
   isDarkMode = false; // Para el modo dark/light
+  private themeSubscription?: Subscription;
   
   // Modal properties
   isModalOpen = false;
@@ -226,10 +228,15 @@ export class HomeComponent implements AfterViewInit {
 
   constructor(private host: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef, private themeService: ThemeService) {
     // Suscribirse al estado del tema
-    this.themeService.isDarkMode$.subscribe(isDark => {
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDark => {
       this.isDarkMode = isDark;
-      this.cdr.detectChanges();
+      // Usar markForCheck en lugar de detectChanges directo
+      this.cdr.markForCheck();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.themeSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {

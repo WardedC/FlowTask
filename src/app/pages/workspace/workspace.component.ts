@@ -1,16 +1,18 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChildren, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../service/theme.service';
 import { animate, createTimeline, stagger } from 'animejs';
 import { AnimatedStatsCardComponent, StatsCardData } from '../../components/animated-stats-card/animated-stats-card.component';
 import { AnimatedBoardCardComponent, BoardCardData } from '../../components/animated-board-card/animated-board-card.component';
+import { CreateModalComponent, ModalConfig, CreateItemData } from '../../components/create-modal/create-modal.component';
 
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [CommonModule, AnimatedStatsCardComponent, AnimatedBoardCardComponent],
+  imports: [CommonModule, FormsModule, AnimatedStatsCardComponent, AnimatedBoardCardComponent, CreateModalComponent],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.css'
 })
@@ -19,6 +21,95 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   workspaceName: string = '';
   isDarkMode: boolean = false;
   private themeSubscription: Subscription = new Subscription();
+
+  // Modal properties para crear board
+  isModalOpen = false;
+  newBoard = {
+    name: '',
+    description: '',
+    theme: 'cerulean',
+    customColor: '#0075A2',
+    customIcon: 'fas fa-layer-group',
+    members: [] as string[]
+  };
+  newMemberEmail = '';
+
+  // Modal configuration for new component
+  modalConfig: ModalConfig = {
+    title: 'Crear Nuevo Board',
+    icon: 'fa-layer-group',
+    type: 'board'
+  };
+
+  // Available themes para board creation
+  availableThemes = [
+    { id: 'cerulean', name: 'Desarrollo', color: '#0075A2', icon: 'fas fa-code' },
+    { id: 'violet', name: 'Diseño', color: '#6A4C93', icon: 'fas fa-palette' },
+    { id: 'amber', name: 'Marketing', color: '#FFB400', icon: 'fas fa-bullhorn' },
+    { id: 'turquoise', name: 'Operaciones', color: '#2EC4B6', icon: 'fas fa-cogs' },
+    { id: 'emerald', name: 'Ventas', color: '#10B981', icon: 'fas fa-chart-line' },
+    { id: 'rose', name: 'Soporte', color: '#F43F5E', icon: 'fas fa-headset' },
+    { id: 'purple', name: 'Investigación', color: '#8B5CF6', icon: 'fas fa-microscope' },
+    { id: 'orange', name: 'Finanzas', color: '#F97316', icon: 'fas fa-coins' },
+    { id: 'cyan', name: 'DevOps', color: '#06B6D4', icon: 'fas fa-server' },
+    { id: 'indigo', name: 'Educación', color: '#6366F1', icon: 'fas fa-graduation-cap' },
+    { id: 'pink', name: 'Eventos', color: '#EC4899', icon: 'fas fa-calendar-alt' },
+    { id: 'lime', name: 'Sostenibilidad', color: '#84CC16', icon: 'fas fa-leaf' },
+    { id: 'custom', name: 'Personalizado', color: '#374151', icon: 'fas fa-paint-brush' }
+  ];
+
+  // Available icons para board selection
+  availableIcons = [
+    // Work & Business
+    { category: 'Trabajo', icons: [
+      'fas fa-briefcase', 'fas fa-building', 'fas fa-chart-bar', 'fas fa-chart-line',
+      'fas fa-chart-pie', 'fas fa-clipboard', 'fas fa-tasks', 'fas fa-project-diagram',
+      'fas fa-bullseye', 'fas fa-rocket', 'fas fa-lightbulb', 'fas fa-handshake'
+    ]},
+    // Technology
+    { category: 'Tecnología', icons: [
+      'fas fa-code', 'fas fa-laptop-code', 'fas fa-database', 'fas fa-server',
+      'fas fa-cloud', 'fas fa-cogs', 'fas fa-microchip', 'fas fa-robot',
+      'fas fa-wifi', 'fas fa-mobile-alt', 'fas fa-desktop', 'fas fa-tablet-alt'
+    ]},
+    // Design & Creative
+    { category: 'Diseño', icons: [
+      'fas fa-palette', 'fas fa-paint-brush', 'fas fa-pen-nib', 'fas fa-camera',
+      'fas fa-image', 'fas fa-film', 'fas fa-music', 'fas fa-video',
+      'fas fa-magic', 'fas fa-eye', 'fas fa-drafting-compass', 'fas fa-cut'
+    ]},
+    // Communication
+    { category: 'Comunicación', icons: [
+      'fas fa-bullhorn', 'fas fa-comments', 'fas fa-envelope', 'fas fa-phone',
+      'fas fa-headset', 'fas fa-microphone', 'fas fa-broadcast-tower', 'fas fa-rss',
+      'fas fa-share-alt', 'fas fa-hashtag', 'fas fa-at', 'fas fa-globe'
+    ]},
+    // Education & Research
+    { category: 'Educación', icons: [
+      'fas fa-graduation-cap', 'fas fa-book', 'fas fa-microscope', 'fas fa-flask',
+      'fas fa-atom', 'fas fa-dna', 'fas fa-brain', 'fas fa-user-graduate',
+      'fas fa-chalkboard-teacher', 'fas fa-pencil-alt', 'fas fa-bookmark', 'fas fa-certificate'
+    ]},
+    // Finance & Analytics
+    { category: 'Finanzas', icons: [
+      'fas fa-coins', 'fas fa-dollar-sign', 'fas fa-credit-card', 'fas fa-calculator',
+      'fas fa-piggy-bank', 'fas fa-wallet', 'fas fa-receipt', 'fas fa-file-invoice',
+      'fas fa-balance-scale', 'fas fa-trending-up', 'fas fa-percentage', 'fas fa-exchange-alt'
+    ]},
+    // General
+    { category: 'General', icons: [
+      'fas fa-star', 'fas fa-heart', 'fas fa-home', 'fas fa-users',
+      'fas fa-calendar-alt', 'fas fa-clock', 'fas fa-flag', 'fas fa-trophy',
+      'fas fa-gift', 'fas fa-gamepad', 'fas fa-puzzle-piece', 'fas fa-cube'
+    ]}
+  ];
+
+  // Color presets para board
+  colorPresets = [
+    '#0075A2', '#6A4C93', '#FFB400', '#2EC4B6', '#10B981', '#F43F5E',
+    '#8B5CF6', '#F97316', '#06B6D4', '#6366F1', '#EC4899', '#84CC16',
+    '#EF4444', '#F59E0B', '#3B82F6', '#8B5A2B', '#6B7280', '#000000'
+  ];
 
   // Datos para las tarjetas de estadísticas
   statsCardsData: StatsCardData[] = [
@@ -110,7 +201,8 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -460,11 +552,180 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
     return board.title;
   }
 
+  // Modal methods
+  openCreateBoardModal(): void {
+    console.log('Opening board modal...');
+    this.isModalOpen = true;
+    console.log('Modal state:', this.isModalOpen);
+    this.resetForm();
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    
+    // Reset scroll position of modal to top
+    setTimeout(() => {
+      const modalElement = document.querySelector('#create-board-modal');
+      if (modalElement) {
+        modalElement.scrollTop = 0;
+      }
+    }, 50);
+    
+    // Force animation trigger after DOM update
+    setTimeout(() => {
+      console.log('Triggering change detection...');
+      this.cdr.detectChanges();
+    }, 10);
+  }
+
+  closeCreateBoardModal(): void {
+    this.isModalOpen = false;
+    this.resetForm();
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+  }
+
+  // New modal component event handlers
+  onModalClosed(): void {
+    this.closeCreateBoardModal();
+  }
+
+  onBoardCreated(boardData: CreateItemData): void {
+    // Convert CreateItemData to BoardCardData format
+    const newBoardCard: BoardCardData = {
+      title: boardData.name,
+      description: boardData.description,
+      icon: boardData.icon,
+      color: boardData.color,
+      progress: 0,
+      completed: 0,
+      pending: 0,
+      total: 0
+    };
+
+    // Add to boardCardsData array
+    this.boardCardsData.push(newBoardCard);
+    
+    // Close modal
+    this.closeCreateBoardModal();
+
+    console.log('Nuevo board creado:', newBoardCard);
+  }
+
+  resetForm(): void {
+    this.newBoard = {
+      name: '',
+      description: '',
+      theme: 'cerulean',
+      customColor: '#0075A2',
+      customIcon: 'fas fa-layer-group',
+      members: []
+    };
+    this.newMemberEmail = '';
+  }
+
+  selectTheme(themeId: string): void {
+    this.newBoard.theme = themeId;
+    if (themeId !== 'custom') {
+      const selectedTheme = this.availableThemes.find(t => t.id === themeId);
+      if (selectedTheme) {
+        this.newBoard.customColor = selectedTheme.color;
+        this.newBoard.customIcon = selectedTheme.icon;
+      }
+    }
+  }
+
+  selectColor(color: string): void {
+    this.newBoard.customColor = color;
+    this.newBoard.theme = 'custom';
+  }
+
+  selectIcon(icon: string): void {
+    this.newBoard.customIcon = icon;
+    this.newBoard.theme = 'custom';
+  }
+
+  onCustomColorChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.newBoard.customColor = target.value;
+    this.newBoard.theme = 'custom';
+  }
+
+  getCurrentColor(): string {
+    return this.newBoard.customColor;
+  }
+
+  getCurrentIcon(): string {
+    return this.newBoard.customIcon;
+  }
+
+  addMember(): void {
+    if (this.newMemberEmail && this.isValidEmail(this.newMemberEmail)) {
+      if (!this.newBoard.members.includes(this.newMemberEmail)) {
+        this.newBoard.members.push(this.newMemberEmail);
+        this.newMemberEmail = '';
+      }
+    }
+  }
+
+  removeMember(index: number): void {
+    this.newBoard.members.splice(index, 1);
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  isFormValid(): boolean {
+    return this.newBoard.name.trim().length >= 3 && 
+           this.newBoard.description.trim().length >= 10;
+  }
+
+  createBoard(): void {
+    if (!this.isFormValid()) return;
+
+    // Generate unique ID
+    const newId = 'board-' + Date.now();
+    
+    // Mapeo de colores para el componente AnimatedBoardCard
+    const colorMap: { [key: string]: 'blue' | 'purple' | 'green' | 'orange' } = {
+      '#0075A2': 'blue',
+      '#6A4C93': 'purple', 
+      '#10B981': 'green',
+      '#F97316': 'orange'
+    };
+    
+    const boardColor = colorMap[this.newBoard.customColor] || 'blue';
+    
+    // Create new board object
+    const newBoardData: BoardCardData = {
+      title: this.newBoard.name,
+      description: this.newBoard.description,
+      icon: this.newBoard.customIcon.replace('fas fa-', 'fa-'),
+      color: boardColor,
+      progress: 0,
+      completed: 0,
+      pending: 0,
+      total: 0
+    };
+
+    // Add to boards array
+    this.boardCardsData.unshift(newBoardData);
+    
+    // Close modal
+    this.closeCreateBoardModal();
+    
+    // Show success notification
+    this.showSuccessNotification('¡Board creado exitosamente!');
+  }
+
+  showSuccessNotification(message: string): void {
+    console.log(message);
+    // Aquí podrías implementar una notificación toast más elaborada
+  }
+
   // Métodos para el botón de agregar nuevo board
   onAddNewBoard(): void {
-    // Aquí iría la lógica para crear un nuevo board
-    console.log('Crear nuevo board');
-    // Ejemplo: this.boardService.createNewBoard();
+    this.openCreateBoardModal();
   }
 
   onAddBoardHover(ev: MouseEvent): void {

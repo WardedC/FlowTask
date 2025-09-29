@@ -1,24 +1,3 @@
-/* Estilos específicos para el componente workspace */
-
-/* Global dark mode styles - copied from workspace-list */
-:host-context(.dark) .bg-white {
-  background-color: #1e293b !important;
-}
-
-:host-context(.dark) .text-gray-900 {
-  color: #f8fafc !important;
-}
-
-:host-context(.dark) .text-gray-600 {
-  color: #cbd5e1 !important;
-}
-
-:host-context(.dark) .text-gray-70/* Enhanced modal backdrop blur effect */
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
 /* Icon selection container border override */
 .max-h-60.border.border-gray-200 {
   border-color: rgba(255, 255, 255, 0.8) !important;
@@ -38,10 +17,10 @@
 }
 
 :host-context(.dark) .text-gray-700 {
-  color: #cbd5e1 !important;
+  color: #e2e8f0 !important;
 }
 
-:host-context(.dark) .text-gray-800 {
+:host-context(.dark) .text-gray-900 {
   color: #f1f5f9 !important;
 }
 
@@ -49,30 +28,52 @@
   background-color: #374151 !important;
 }
 
-:host-context(.dark) .bg-gray-100 {
-  background-color: #4b5563 !important;
+:host-context(.dark) .border-gray-300 {
+  border-color: #4b5563 !important;
 }
 
-:host-context(.dark) .bg-gray-700 {
-  background-color: #374151 !important;
+:host-context(.dark) .border-gray-200 {
+  border-color: #4b5563 !important;
 }
 
-:host-context(.dark) .bg-gray-800 {
-  background-color: #1e293b !important;
+/* Dark mode button styling */
+:host-context(.dark) button[type="button"] {
+  background-color: #4b5563;
+  border-color: #6b7280;
+  color: #e5e7eb;
 }
 
-:host-context(.dark) .text-white {
-  color: #ffffff !important;
+:host-context(.dark) button[type="button"]:hover {
+  background-color: #374151;
 }
 
-:host-context(.dark) .text-gray-300 {
-  color: #d1d5db !important;
+/* Favorite button styling */
+:host-context(.dark) .favorite-button-list {
+  background: linear-gradient(135deg, rgba(75, 85, 99, 0.95), rgba(55, 65, 81, 0.95));
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  color: #e5e7eb;
 }
 
-:host-context(.dark) .text-gray-400 {
-  color: #9ca3af !important;
+:host-context(.dark) .favorite-button-list:hover {
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.95), rgba(75, 85, 99, 0.95));
+  border-color: rgba(156, 163, 175, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+:host-context(html:not(.dark)) .favorite-button-list:hover,
+:host-context(.light) .favorite-button-list:hover {
+  background: linear-gradient(135deg, rgba(249, 250, 251, 0.95), rgba(243, 244, 246, 0.95));
+  border-color: rgba(209, 213, 219, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+:host-context(.dark) .border-white\/50 {
+  border-color: rgba(107, 114, 128, 0.5) !important;
+}
+
+/* Override default border colors for dark mode */
 :host-context(.dark) .border-gray-700 {
   border-color: #374151 !important;
 }
@@ -86,40 +87,7 @@
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-:host-context(.dark) .bg-blue-50 {
-  background-color: #1e3a8a !important;
-}
-
-:host-context(.dark) .border-blue-500 {
-  border-color: #3b82f6 !important;
-}
-
-/* Light mode explicit styles */
-:host-context(html:not(.dark)) .bg-white,
-:host-context(.light) .bg-white {
-  background-color: #ffffff !important;
-}
-
-:host-context(html:not(.dark)) .text-gray-900,
-:host-context(.light) .text-gray-900 {
-  color: #111827 !important;
-}
-
-:host-context(html:not(.dark)) .text-gray-600,
-:host-context(.light) .text-gray-600 {
-  color: #4b5563 !important;
-}
-
-:host-context(html:not(.dark)) .text-gray-700,
-:host-context(.light) .text-gray-700 {
-  color: #374151 !important;
-}
-
-:host-context(html:not(.dark)) .bg-gray-50,
-:host-context(.light) .bg-gray-50 {
-  background-color: #f9fafb !important;
-}
-
+/* Override for light mode too */
 :host-context(html:not(.dark)) .border-gray-200,
 :host-context(.light) .border-gray-200,
 :host-context(html:not(.dark)) .border-white,
@@ -132,7 +100,7 @@
   border-color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Animaciones CSS - copiadas de workspace-list */
+/* Animaciones CSS */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -156,37 +124,31 @@
 }
 
 @keyframes scaleInSmooth {
-  from {
+  0% {
     opacity: 0;
     transform: scale(0.85) translateY(20px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
 }
 
 @keyframes fadeInStagger {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(25px) scale(0.95);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-/* Aplicar animaciones a los elementos */
+/* Animación de entrada suave para elementos */
 .animate-element {
-  animation-fill-mode: forwards;
   opacity: 0;
   transform: translateY(20px) scale(0.96);
-}
-
-/* Clase temporal para animar la entrada */
-.animate-element.animate-entrance {
-  opacity: 0;
 }
 
 /* Background colors to match workspace-list */
@@ -242,7 +204,7 @@
   z-index: 4;
 }
 
-/* Modal animations - copied from workspace-list */
+/* Modal animations */
 .modal-content {
   transform-origin: center;
 }
@@ -261,11 +223,9 @@
 @keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(20px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -291,7 +251,7 @@
   0%, 100% {
     box-shadow: 0 0 0 0 rgba(46, 196, 182, 0.7);
   }
-  50% {
+  70% {
     box-shadow: 0 0 0 10px rgba(46, 196, 182, 0);
   }
 }
@@ -323,31 +283,8 @@
 }
 
 .theme-option:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Color picker and icon selection styles */
-.color-preset-btn {
-  transition: all 0.2s ease;
-}
-
-.color-preset-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.icon-btn {
-  transition: all 0.2s ease;
-}
-
-.icon-btn:hover {
-  background-color: rgba(0, 117, 162, 0.1);
-  transform: scale(1.1);
-}
-
-.icon-btn.selected {
-  background-color: rgba(0, 117, 162, 0.2);
-  border-color: #0075A2;
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 117, 162, 0.2);
 }
 
 /* Custom scrollbar for icon selection */
@@ -356,59 +293,50 @@
 }
 
 .max-h-60::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
 }
 
 .max-h-60::-webkit-scrollbar-thumb {
-  background: #0075A2;
-  border-radius: 3px;
+  background: linear-gradient(135deg, #0075A2, #6A4C93);
+  border-radius: 10px;
 }
 
 .max-h-60::-webkit-scrollbar-thumb:hover {
-  background: #6A4C93;
+  background: linear-gradient(135deg, #005f85, #573080);
 }
 
 /* Dark mode scrollbar */
 :host-context(.dark) .max-h-60::-webkit-scrollbar-track {
-  background: #374151;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-:host-context(.dark) .max-h-60::-webkit-scrollbar-thumb {
-  background: #6b7280;
+/* Icon container hover effect */
+.max-h-60 button {
+  position: relative;
+  overflow: hidden;
 }
 
-:host-context(.dark) .max-h-60::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+.max-h-60 button:hover {
+  background: rgba(0, 117, 162, 0.1);
 }
 
-/* Enhanced input focus styles - copied from workspace-list */
-input[type="color"] {
-  border: none;
-  outline: none;
-  cursor: pointer;
+.max-h-60 button:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 0.6s ease-out;
 }
 
-input[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
-  border: none;
-  border-radius: 8px;
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
-
-input[type="color"]::-webkit-color-swatch {
-  border: none;
-  border-radius: 8px;
-}
-
-/* Preview section styles */
-.preview-section {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px solid #e2e8f0;
-}
-
-/* Modal backdrop blur effect */
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-

@@ -26,7 +26,7 @@ export interface StatsCardData {
          (mouseenter)="onCardHoverEnter($event)" (mouseleave)="onCardHoverLeave($event)"
          style="opacity: 0; transform: translateY(20px) scale(0.96);">
       <!-- Sección superior con animación -->
-      <div class="relative h-20 overflow-hidden"
+      <div class="relative h-18 overflow-hidden"
            [ngClass]="'bg-gradient-to-br from-[' + data.gradient.from + '] to-[' + data.gradient.to + '] dark:from-[' + data.gradient.fromDark + '] dark:to-[' + data.gradient.toDark + ']'">
         <!-- Overlay de gradiente -->
         <div class="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent stats-header-overlay"></div>
@@ -37,29 +37,29 @@ export interface StatsCardData {
         </div>
         
         <!-- Icono de la carta -->
-        <div class="absolute top-3 left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center card-icon"
+        <div class="absolute top-3 left-4 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center card-icon"
              style="z-index: 3;">
-          <i [class]="'fas ' + data.icon + ' text-lg text-white'"></i>
+          <i [class]="'fas ' + data.icon + ' text-sm text-white'"></i>
         </div>
         
         <!-- Título -->
         <div class="absolute bottom-3 right-4" style="z-index: 3;">
-          <p class="text-white/90 text-xl font-medium">{{ data.title }}</p>
+          <p class="text-white/90 text-lg font-medium">{{ data.title }}</p>
         </div>
       </div>
       
       <!-- Sección inferior con métricas -->
-      <div class="p-5 relative overflow-hidden">
+      <div class="p-4 relative overflow-hidden">
         <!-- Partículas flotantes en el fondo del body -->
         <div #bodyParticles class="absolute inset-0 pointer-events-none" style="z-index: 1;">
         </div>
         
         <!-- Contenido principal -->
         <div class="relative" style="z-index: 2;">
-          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{{ data.description }}</p>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{{ data.description }}</p>
           
           <!-- Valor principal con círculo y icono de tendencia -->
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-2">
             <!-- Lado izquierdo: círculo + número -->
             <div class="flex items-center space-x-3">
               <div class="w-3 h-3 rounded-full animate-pulse" 
@@ -68,7 +68,7 @@ export interface StatsCardData {
                      'bg-green-500': data.title === 'Completadas',
                      'bg-orange-500': data.title === 'En proceso'
                    }"></div>
-              <p #valueNumber class="text-3xl font-bold transition-colors duration-200"
+              <p #valueNumber class="text-2xl font-bold transition-colors duration-200"
                  [ngClass]="{
                    'text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)]': data.title === 'Total',
                    'text-green-600 dark:text-green-400 group-hover:text-[#2EC4B6]': data.title === 'Completadas',
@@ -80,7 +80,7 @@ export interface StatsCardData {
             
             <!-- Lado derecho: icono de tendencia -->
             <div class="flex items-center">
-              <i class="fas text-xl"
+              <i class="fas text-lg"
                  [ngClass]="{
                    'fa-tasks text-[#2EC4B6]': data.title === 'Total',
                    'fa-check-circle text-green-500': data.title === 'Completadas',
@@ -250,21 +250,38 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private animateParticle(particle: HTMLElement, index: number): void {
-    const animateFloat = () => {
-      if (this.isDestroyed) return;
-      
-      animate(particle, {
-        translateY: [0, -10, 0],
-        translateX: [0, Math.random() * 6 - 3, 0],
-        opacity: [0.3, 0.6, 0.3],
-        scale: [1, 1.2, 1],
-        duration: 3000 + (index * 500),
-        easing: 'easeInOutSine',
-        complete: animateFloat
-      });
-    };
+    if (this.isDestroyed) return;
     
-    setTimeout(animateFloat, index * 800);
+    // Crear una animación continua suave usando loop
+    const animation = animate(particle, {
+      translateY: [
+        { value: 0, duration: 1500 },
+        { value: -12, duration: 1500 },
+        { value: 0, duration: 1500 }
+      ],
+      translateX: [
+        { value: 0, duration: 1500 },
+        { value: Math.random() * 6 - 3, duration: 1500 },
+        { value: 0, duration: 1500 }
+      ],
+      opacity: [
+        { value: 0.3, duration: 1500 },
+        { value: 0.7, duration: 1500 },
+        { value: 0.3, duration: 1500 }
+      ],
+      scale: [
+        { value: 1, duration: 1500 },
+        { value: 1.2, duration: 1500 },
+        { value: 1, duration: 1500 }
+      ],
+      loop: true,
+      easing: 'easeInOutSine',
+      delay: index * 300, // Escalonar las animaciones
+      autoplay: true
+    });
+    
+    // Almacenar la animación para limpieza
+    this.animationInstances.push(animation);
   }
 
   private animateValueCounter(): void {
@@ -452,31 +469,51 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
       autoplay: true
     });
 
-    // Restaurar el seek aleatorio para distribuir las figuras en diferentes puntos del ciclo
-    // pero mantener el inicio inmediato
-    animation.seek(animation.duration * Math.random());
-    floatAnimation.seek(floatAnimation.duration * Math.random());
+    // Verificar que el componente no esté destruido antes de iniciar animaciones
+    if (!this.isDestroyed) {
+      // Restaurar el seek aleatorio para distribuir las figuras en diferentes puntos del ciclo
+      // pero mantener el inicio inmediato
+      animation.seek(animation.duration * Math.random());
+      floatAnimation.seek(floatAnimation.duration * Math.random());
 
-    this.animationInstances.push(animation, floatAnimation);
+      this.animationInstances.push(animation, floatAnimation);
+    } else {
+      // Si está destruido, pausar inmediatamente
+      animation.pause();
+      floatAnimation.pause();
+    }
   }
 
   private cleanupAnimations(): void {
+    // Marcar como destruido primero
+    this.isDestroyed = true;
+    
     // Pausar todas las animaciones
     this.animationInstances.forEach(animation => {
       try {
-        animation.pause();
+        if (animation && typeof animation.pause === 'function') {
+          animation.pause();
+        }
+        if (animation && typeof animation.remove === 'function') {
+          animation.remove();
+        }
       } catch (e) {
         // Ignorar errores al pausar animaciones ya terminadas
+        console.warn('Error cleaning animation:', e);
       }
     });
     
     // Limpiar arrays
     this.animationInstances = [];
     
-    // Remover figuras del DOM
+    // Remover figuras del DOM de forma segura
     this.shapes.forEach(shape => {
-      if (shape && shape.parentElement) {
-        shape.parentElement.removeChild(shape);
+      try {
+        if (shape && shape.parentElement) {
+          shape.parentElement.removeChild(shape);
+        }
+      } catch (e) {
+        console.warn('Error removing shape:', e);
       }
     });
     this.shapes = [];

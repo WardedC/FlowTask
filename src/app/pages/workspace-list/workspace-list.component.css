@@ -70,6 +70,15 @@
   border-color: #374151 !important;
 }
 
+:host-context(.dark) .border-gray-200,
+:host-context(.dark) .border-white {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+:host-context(.dark) .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
 :host-context(.dark) .divide-gray-700 > :not([hidden]) ~ :not([hidden]) {
   border-color: #374151 !important;
 }
@@ -103,6 +112,18 @@
 :host-context(html:not(.dark)) .bg-gray-50,
 :host-context(.light) .bg-gray-50 {
   background-color: #f9fafb !important;
+}
+
+:host-context(html:not(.dark)) .border-gray-200,
+:host-context(.light) .border-gray-200,
+:host-context(html:not(.dark)) .border-white,
+:host-context(.light) .border-white {
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+:host-context(html:not(.dark)) .border-gray-300,
+:host-context(.light) .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 
 :host-context(html:not(.dark)) .bg-gray-100,
@@ -196,6 +217,15 @@
 
 :host-context(.dark) .bg-\[#10B981\] {
   background-color: #10B981 !important; /* emerald ya es brillante */
+}
+
+/* Enhanced dark mode support for modal elements */
+:host-context(.dark) .bg-blue-50 {
+  background-color: #1e3a8a !important;
+}
+
+:host-context(.dark) .border-blue-500 {
+  border-color: #3b82f6 !important;
 }
 
 :host-context(.dark) .bg-\[#F43F5E\] {
@@ -809,6 +839,19 @@ a:focus-visible {
   background: #6A4C93;
 }
 
+/* Dark mode scrollbar */
+:host-context(.dark) .max-h-60::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+:host-context(.dark) .max-h-60::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+:host-context(.dark) .max-h-60::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
 /* Enhanced input focus styles */
 input[type="color"] {
   border: none;
@@ -874,4 +917,31 @@ input[type="color"]::-webkit-color-swatch {
   border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+/* Enhanced modal styles */
+/* Preview section styles */
+.preview-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+}
+
+/* Enhanced modal backdrop blur effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Icon selection container border override */
+.max-h-60.border.border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+:host-context(.dark) .max-h-60.border.border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Force white color for icon selection buttons */
+.max-h-60 button i {
+  color: white !important;
 }
