@@ -114,8 +114,8 @@ export interface IconCategory {
               <!-- Enhanced Close Button -->
               <button type="button" 
                       (click)="closeModal()"
-                      class="relative group p-2 rounded-lg glass-effect bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all duration-300">
-                <i class="fas fa-times text-lg transition-all duration-300 group-hover:rotate-90"></i>
+                      class="relative group p-2 rounded-lg glass-effect bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all duration-300">
+                <i class="fas fa-times text-lg transition-all duration-300 group-hover:rotate-90 text-white"></i>
               </button>
             </div>
           </div>
@@ -319,8 +319,9 @@ export interface IconCategory {
                 </div>
                 Color
               </label>
-              <div class="flex items-center gap-3">
-                <div class="flex gap-2">
+              <!-- Color Preset Buttons -->
+              <div class="mb-3">
+                <div class="flex flex-wrap gap-2">
                   <button *ngFor="let color of colorPresets"
                           type="button"
                           class="w-8 h-8 rounded-lg border-2 shadow-md hover:scale-110 transition-all duration-300"
@@ -332,9 +333,43 @@ export interface IconCategory {
                           [class.ring-offset-2]="itemData.color === color"
                           (click)="selectColor(color)"></button>
                 </div>
-                <input type="color" 
-                       [(ngModel)]="itemData.color"
-                       class="w-10 h-8 rounded-lg border-2 border-gray-200 cursor-pointer">
+              </div>
+
+              <!-- Custom Color Section -->
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2 flex-1">
+                    <input type="color" 
+                           [(ngModel)]="itemData.color"
+                           (input)="onColorChange($event)"
+                           class="w-12 h-10 rounded-lg border-2 border-gray-200 cursor-pointer">
+                    
+                    <div class="flex-1">
+                      <input type="text" 
+                             [(ngModel)]="itemData.color"
+                             (input)="onHexColorChange($event)"
+                             placeholder="#0075A2"
+                             pattern="^#[0-9A-Fa-f]{6}$"
+                             class="w-full h-10 px-3 text-sm font-mono bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 dark:text-white text-gray-900 rounded-lg focus:ring-2 focus:ring-[#0075A2] focus:border-[#0075A2] transition-all duration-300 placeholder:text-gray-400">
+                    </div>
+                  </div>
+                  
+                  <!-- Color Preview -->
+                  <div class="w-16 h-10 rounded-lg border-2 border-gray-200 flex items-center justify-center shadow-inner"
+                       [style.background]="itemData.color">
+                    <span class="text-xs font-bold" 
+                          [class.text-white]="isColorDark(itemData.color)"
+                          [class.text-black]="!isColorDark(itemData.color)">
+                      {{ itemData.color.toUpperCase() }}
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Color Helper Text -->
+                <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <i class="fas fa-info-circle text-xs"></i>
+                  <span>Ingresa un código hexadecimal (ej: #FF5733) o usa el selector de color</span>
+                </div>
               </div>
             </div>
 
@@ -368,7 +403,7 @@ export interface IconCategory {
                         (click)="createItem()"
                         [disabled]="!itemData.name.trim()"
                         class="create-button px-8 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0075A2] via-[#4B9BE8] to-[#0075A2] rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 relative overflow-hidden group flex items-center gap-2">
-                  <i class="fas fa-plus relative z-10 transition-transform duration-300 group-hover:rotate-90" 
+                  <i class="fas fa-plus relative z-10 transition-transform duration-300 group-hover:rotate-90 text-white" 
                      [class.fa-plus]="!isCreating" 
                      [class.fa-check]="isCreating"></i>
                   <span class="relative z-10">{{ !isCreating ? 'Crear' : '¡Creado!' }}</span>
@@ -813,6 +848,53 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   selectColor(color: string): void {
     this.itemData.color = color;
     this.updateProgress();
+  }
+
+  // Color input handlers
+  onColorChange(event: any): void {
+    this.itemData.color = event.target.value;
+    this.updateProgress();
+  }
+
+  onHexColorChange(event: any): void {
+    const hexValue = event.target.value;
+    // Validate hex color format
+    const hexPattern = /^#[0-9A-Fa-f]{6}$/;
+    
+    if (hexPattern.test(hexValue)) {
+      this.itemData.color = hexValue;
+      this.updateProgress();
+    } else if (hexValue.startsWith('#') && hexValue.length <= 7) {
+      // Allow partial input while typing
+      this.itemData.color = hexValue;
+    } else if (!hexValue.startsWith('#') && hexValue.length > 0) {
+      // Auto-add # if user types without it
+      const correctedValue = '#' + hexValue;
+      if (correctedValue.length <= 7) {
+        this.itemData.color = correctedValue;
+        // Update the input field to show the corrected value
+        event.target.value = correctedValue;
+      }
+    }
+  }
+
+  // Helper method to determine if color is dark (for text contrast)
+  isColorDark(color: string): boolean {
+    if (!color || !color.startsWith('#')) {
+      return false;
+    }
+    
+    // Convert hex to RGB
+    const hex = color.substring(1);
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return true if color is dark (luminance < 0.5)
+    return luminance < 0.5;
   }
 
   selectIcon(icon: string): void {
