@@ -38,20 +38,20 @@ export interface IconCategory {
     <!-- Compact Modal Container -->
     <div #modalContainer 
          [id]="'create-' + config.type + '-modal'" 
-         class="fixed inset-0 z-50 overflow-hidden transition-all duration-300"
-         [class.pointer-events-none]="!isModalOpen"
-         [class.pointer-events-auto]="isModalOpen"
-         [class.opacity-0]="!isModalOpen"
-         [class.opacity-100]="isModalOpen">
+         class="fixed inset-0 z-50 overflow-hidden transition-all duration-500 opacity-0 pointer-events-none"
+         [class.modal-hidden]="!isModalOpen || animationPhase === 0"
+         [class.modal-visible]="isModalOpen && animationPhase > 0">
       
       <!-- Enhanced Backdrop -->
-      <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/60 to-black/80 backdrop-blur-xl transition-all duration-500"
-           [class.opacity-0]="!isModalOpen"
-           [class.opacity-100]="isModalOpen">
+      <div class="modal-backdrop absolute inset-0 bg-gradient-to-br from-black/40 via-black/60 to-black/80 backdrop-blur-xl transition-all duration-500 opacity-0"
+           (click)="closeModal()">
         <!-- Animated Background Particles -->
-        <div class="absolute inset-0 overflow-hidden">
-          <div class="floating-element absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-[#0075A2]/20 to-[#4B9BE8]/20 rounded-full blur-3xl animate-pulse"></div>
-          <div class="floating-element absolute top-3/4 right-1/4 w-24 h-24 bg-gradient-to-r from-[#6A4C93]/20 to-[#FF6B6B]/20 rounded-full blur-2xl animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute inset-0 overflow-hidden" [class.opacity-0]="animationPhase === 0" [class.opacity-100]="animationPhase >= 1">
+          <div class="floating-element absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-[#0075A2]/20 to-[#4B9BE8]/20 rounded-full blur-3xl"></div>
+          <div class="floating-element absolute top-3/4 right-1/4 w-24 h-24 bg-gradient-to-r from-[#6A4C93]/20 to-[#FF6B6B]/20 rounded-full blur-2xl"></div>
+          <div class="floating-element absolute top-1/2 left-1/3 w-16 h-16 bg-gradient-to-r from-[#2EC4B6]/15 to-[#10B981]/15 rounded-full blur-xl"></div>
+          <div class="floating-element absolute top-1/3 right-1/3 w-20 h-20 bg-gradient-to-r from-[#8B5CF6]/15 to-[#06B6D4]/15 rounded-full blur-2xl"></div>
+          <div class="floating-element absolute bottom-1/4 left-1/2 w-28 h-28 bg-gradient-to-r from-[#84CC16]/10 to-[#6366F1]/10 rounded-full blur-3xl"></div>
         </div>
       </div>
 
@@ -63,11 +63,7 @@ export interface IconCategory {
 
         <!-- Main Modal Content -->
         <!-- Progress Indicator Floating Above Modal -->
-        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-500"
-             [class.opacity-0]="!isModalOpen"
-             [class.opacity-100]="isModalOpen"
-             [class.scale-95]="!isModalOpen"
-             [class.scale-100]="isModalOpen">
+        <div class="progress-indicator-container absolute -top-6 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-500 opacity-0 scale-95 -translate-y-4">
           <div class="rounded-full px-4 py-1.5 bg-black/80 backdrop-blur-sm border border-black/40 shadow-xl">
             <div class="flex items-center space-x-3">
               <span class="text-white text-xs font-medium">
@@ -82,13 +78,8 @@ export interface IconCategory {
         </div>
 
         <div #modalContent 
-             class="relative w-full max-w-3xl max-h-[90vh] modal-content bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all duration-700 flex flex-col"
-             [class.scale-95]="!isModalOpen"
-             [class.scale-100]="isModalOpen"
-             [class.translate-y-4]="!isModalOpen"
-             [class.translate-y-0]="isModalOpen"
-             [class.opacity-0]="!isModalOpen"
-             [class.opacity-100]="isModalOpen"
+             class="modal-content-container relative w-full max-w-3xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transform transition-all duration-700 opacity-0 scale-95 translate-y-4"
+             (click)="$event.stopPropagation()"
              style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);">
              
           <!-- Modal Header -->
@@ -390,13 +381,7 @@ export interface IconCategory {
         </div>
 
         <!-- Preview Card (Board/Workspace) -->
-        <div class="w-full max-w-md transform transition-all duration-700 flex items-center justify-center"
-             [class.scale-95]="!isModalOpen"
-             [class.scale-100]="isModalOpen"
-             [class.translate-x-4]="!isModalOpen"
-             [class.translate-x-0]="isModalOpen"
-             [class.opacity-0]="!isModalOpen"
-             [class.opacity-100]="isModalOpen">
+        <div class="preview-card-container w-full max-w-md flex items-center justify-center transform transition-all duration-700 opacity-0 scale-95 translate-x-4">
           
           <div class="w-full">
             
@@ -606,6 +591,12 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   isCreating = false;
   currentStep = 0;
   totalSteps = 4;
+  
+  // Enhanced animation control
+  isEntering = false;
+  isExiting = false;
+  showContent = false;
+  animationPhase = 0; // 0: hidden, 1: entering, 2: visible, 3: exiting
 
   // Icon selector properties
   showIconSelector = false;
@@ -658,6 +649,9 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   constructor(private cdr: ChangeDetectorRef, private el: ElementRef) {}
 
   ngOnInit(): void {
+    // Initialize modal state
+    this.initializeModalState();
+    
     // Initialize default themes if not provided
     if (!this.availableThemes || this.availableThemes.length === 0) {
       this.availableThemes = [
@@ -673,24 +667,137 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     }
   }
 
+  private initializeModalState(): void {
+    // Ensure modal starts in completely closed state
+    this.animationPhase = 0;
+    this.showContent = false;
+    this.isAnimating = false;
+    this.isEntering = false;
+    this.isExiting = false;
+    this.isCreating = false;
+    this.currentStep = 0;
+  }
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.updateProgress();
+      
+      // If modal is already open when view initializes, start animation
+      if (this.isModalOpen && this.animationPhase === 0) {
+        this.startEntranceAnimation();
+      }
     }, 100);
   }
 
   ngOnDestroy(): void {
-    // Cleanup if needed
+    // Clear any pending timeouts and reset state
+    this.clearAnimationClasses();
+    this.initializeModalState();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isModalOpen']) {
+      console.log('🔄 Modal state change:', { 
+        isOpen: this.isModalOpen, 
+        previous: changes['isModalOpen'].previousValue,
+        animationPhase: this.animationPhase,
+        isAnimating: this.isAnimating 
+      });
+      
+      if (this.isModalOpen) {
+        // Reset animation state before starting entrance
+        this.animationPhase = 0;
+        this.startEntranceAnimation();
+      } else if (changes['isModalOpen'].previousValue) {
+        // Only start exit animation if modal was previously open
+        this.startExitAnimation();
+      }
       this.updateProgress();
     }
   }
 
   closeModal(): void {
-    this.modalClosed.emit();
+    if (!this.isAnimating && this.isModalOpen) {
+      this.startExitAnimation();
+      // Delay the actual close to allow animation to complete
+      setTimeout(() => {
+        this.modalClosed.emit();
+      }, 300);
+    } else if (!this.isModalOpen) {
+      // If modal is already closed, just emit the event
+      this.modalClosed.emit();
+    }
+  }
+
+  private startEntranceAnimation(): void {
+    if (this.isAnimating) {
+      console.log('⚠️ Entrance animation already in progress, skipping');
+      return;
+    }
+    
+    console.log('🚀 Starting entrance animation');
+    
+    this.isAnimating = true;
+    this.isEntering = true;
+    this.isExiting = false;
+    this.animationPhase = 1;
+    this.showContent = true;
+    
+    // Use double requestAnimationFrame for smoother transition
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.animationPhase = 2; // This will trigger .modal-visible class
+        this.cdr.detectChanges();
+      });
+    });
+
+    // Complete entrance animation
+    setTimeout(() => {
+      console.log('✅ Entrance animation completed');
+      this.isAnimating = false;
+      this.isEntering = false;
+      this.cdr.detectChanges();
+    }, 1200); // Slightly longer to account for staggered animations
+  }
+
+  private startExitAnimation(): void {
+    if (this.isAnimating) {
+      console.log('⚠️ Exit animation already in progress, skipping');
+      return;
+    }
+    
+    console.log('🚪 Starting exit animation');
+    
+    this.isAnimating = true;
+    this.isExiting = true;
+    this.isEntering = false;
+    this.animationPhase = 0; // This will trigger .modal-hidden class
+    
+    this.cdr.detectChanges();
+
+    // Complete exit animation and fully reset state
+    setTimeout(() => {
+      console.log('✅ Exit animation completed, modal fully closed');
+      this.isAnimating = false;
+      this.isExiting = false;
+      this.showContent = false;
+      this.cdr.detectChanges();
+    }, 500);
+  }
+
+  private addEntranceClasses(): void {
+    // No longer needed - CSS handles all animations automatically
+    console.log('🎨 Entrance classes managed by CSS');
+  }
+
+  private addExitClasses(): void {
+    // No longer needed - CSS handles all animations automatically
+    console.log('🎨 Exit classes managed by CSS');
+  }
+
+  private animateFormElements(): void {
+    // Form elements now animate automatically with CSS transitions
+    console.log('📝 Form elements animate with CSS');
   }
 
   selectTheme(themeId: string): void {
@@ -823,23 +930,56 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     if (this.itemData.name.trim()) {
       this.isCreating = true;
       
-      // Add success animation to button
+      // Add loading animation to button
       const createButton = this.el.nativeElement.querySelector('.create-button');
       if (createButton) {
-        createButton.classList.add('success');
+        createButton.classList.add('loading');
+        
+        // Add success animation after a delay
         setTimeout(() => {
-          createButton.classList.remove('success');
-        }, 600);
+          createButton.classList.remove('loading');
+          createButton.classList.add('success');
+        }, 800);
       }
+      
+      // Add success animation to progress bar
+      const progressBars = this.el.nativeElement.querySelectorAll('.progress-bar');
+      progressBars.forEach((bar: HTMLElement) => {
+        bar.style.background = 'linear-gradient(90deg, #10B981, #34D399, #6EE7B7)';
+        bar.style.boxShadow = '0 4px 15px rgba(16, 185, 129, 0.4)';
+      });
+      
+      // Animate form elements out
+      const formGroups = this.el.nativeElement.querySelectorAll('.group');
+      formGroups.forEach((group: HTMLElement, index: number) => {
+        setTimeout(() => {
+          group.style.opacity = '0.6';
+          group.style.transform = 'translateY(-10px) scale(0.98)';
+        }, index * 50);
+      });
       
       // Simple timeout to simulate the creation process
       setTimeout(() => {
         // Debug: Log data being sent
         console.log('Enviando datos del modal:', { ...this.itemData });
         this.itemCreated.emit({ ...this.itemData });
+        
+        // Reset animations before closing
+        if (createButton) {
+          createButton.classList.remove('success');
+        }
+        
         this.resetForm();
         this.isCreating = false;
-      }, 1000);
+        
+        // Start exit animation
+        this.startExitAnimation();
+        
+        // Close modal after animation
+        setTimeout(() => {
+          this.modalClosed.emit();
+        }, 400);
+      }, 1200);
     }
   }
 
@@ -882,6 +1022,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   }
 
   private resetForm(): void {
+    // Reset form data
     this.itemData = {
       name: '',
       description: '',
@@ -891,10 +1032,92 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
       members: [],
       newMemberEmail: ''
     };
+    
+    // Reset animation state
     this.currentStep = 0;
+    this.animationPhase = 0;
+    this.showContent = false;
+    this.isAnimating = false;
+    this.isEntering = false;
+    this.isExiting = false;
+    this.isCreating = false;
+    
+    // Reset all animation classes
+    this.clearAnimationClasses();
+    
     // Trigger change detection to update progress display
     setTimeout(() => {
       this.cdr.detectChanges();
     }, 100);
+  }
+
+  private clearAnimationClasses(): void {
+    // Remove animation classes from all elements
+    const animationClasses = [
+      'modal-entering', 'modal-exiting',
+      'content-entering', 'content-exiting', 
+      'header-entering', 'form-entering',
+      'preview-entering', 'progress-entering'
+    ];
+
+    animationClasses.forEach(className => {
+      const elements = this.el.nativeElement.querySelectorAll('.' + className);
+      elements.forEach((el: HTMLElement) => {
+        el.classList.remove(className);
+      });
+    });
+
+    // Reset specific container classes
+    if (this.modalContainer) {
+      const modalEl = this.modalContainer.nativeElement;
+      animationClasses.forEach(className => {
+        modalEl.classList.remove(className);
+      });
+    }
+
+    if (this.modalContent) {
+      const contentEl = this.modalContent.nativeElement;
+      animationClasses.forEach(className => {
+        contentEl.classList.remove(className);
+      });
+    }
+
+    if (this.modalHeader) {
+      const headerEl = this.modalHeader.nativeElement;
+      animationClasses.forEach(className => {
+        headerEl.classList.remove(className);
+      });
+    }
+
+    // Reset form group styles
+    const formGroups = this.el.nativeElement.querySelectorAll('.group');
+    formGroups.forEach((group: HTMLElement) => {
+      group.style.opacity = '';
+      group.style.transform = '';
+      animationClasses.forEach(className => {
+        group.classList.remove(className);
+      });
+    });
+
+    // Reset progress bars
+    const progressBars = this.el.nativeElement.querySelectorAll('.progress-bar');
+    progressBars.forEach((bar: HTMLElement) => {
+      bar.style.background = '';
+      bar.style.boxShadow = '';
+    });
+
+    // Reset preview card
+    const previewCard = this.el.nativeElement.querySelector('.preview-card');
+    if (previewCard) {
+      animationClasses.forEach(className => {
+        previewCard.classList.remove(className);
+      });
+    }
+
+    // Reset button classes
+    const createButton = this.el.nativeElement.querySelector('.create-button');
+    if (createButton) {
+      createButton.classList.remove('loading', 'success');
+    }
   }
 }
