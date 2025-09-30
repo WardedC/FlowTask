@@ -289,7 +289,7 @@ export interface IconCategory {
                          [class.text-[#0075A2]]="itemData.icon === icon"
                          [class.text-gray-600]="itemData.icon !== icon"
                          [class.dark:text-gray-300]="itemData.icon !== icon"
-                         [class.group-hover:text-[#0075A2]]="itemData.icon !== icon"
+                         [class.group-hover:text-[#0075A2]]="true"
                          class="text-base transition-colors duration-200"></i>
                     </button>
                   </div>

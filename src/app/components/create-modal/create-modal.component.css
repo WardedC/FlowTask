@@ -315,6 +315,156 @@
   transition-delay: 0.7s;
 }
 
+/* === ICON SELECTOR ANIMATIONS FIX === */
+/* Override group animations for icon selector dropdown */
+.group .grid.grid-cols-8 {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.group .grid.grid-cols-8 button {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.group .grid.grid-cols-8 button i {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* Ensure icons are visible during hover states */
+.group .grid.grid-cols-8 button:hover {
+  opacity: 1 !important;
+  transform: scale(1.1) !important;
+}
+
+.group .grid.grid-cols-8 button:hover i {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Specific styles for selected icons on hover - prevent disappearing */
+.group .grid.grid-cols-8 button.border-blue-500:hover i,
+.group .grid.grid-cols-8 button[class*="border-[#0075A2]"]:hover i {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #0075A2 !important;
+}
+
+/* Additional protection for selected icon visibility */
+.group .grid.grid-cols-8 button[class*="bg-blue-50"]:hover i {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #0075A2 !important;
+}
+
+/* Override for the entire icon selector dropdown */
+.group > div[class*="bg-white"][class*="border-2"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.group > div[class*="bg-white"][class*="border-2"] * {
+  opacity: 1 !important;
+}
+
+/* Specific fix for FontAwesome icons in the grid */
+.group i[class^="fas fa-"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* === FIX FOR MAIN ICON SELECTOR BUTTON === */
+/* Ensure ONLY the main icon selector button icon stays visible on hover */
+.group div.mb-4 button.w-full:hover i.text-white {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: white !important;
+}
+
+/* More specific selector for the icon inside the colored background div */
+.group div.mb-4 button:hover div[style*="background"] i {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: white !important;
+}
+
+/* Protect ONLY icons inside the main selector button (not the label) */
+.group div.mb-4 > button i {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.group div.mb-4 > button:hover i {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Override group animations ONLY for the specific icon selector button */
+.group div.mb-4 button[type="button"] {
+  opacity: 1 !important;
+}
+
+.group div.mb-4 button[type="button"]:hover {
+  opacity: 1 !important;
+}
+
+/* Protect the content inside the button container */
+.group div.mb-4 button[type="button"] div.w-12 {
+  opacity: 1 !important;
+}
+
+.group div.mb-4 button[type="button"] div.w-12 i {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.group div.mb-4 button[type="button"]:hover div.w-12 i {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: white !important;
+}
+
+/* CRITICAL FIX: Prevent group hover effects from affecting the icon */
+.group:hover div.mb-4 button[type="button"] div.w-12 i.text-white {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: white !important;
+}
+
+.group:hover div.mb-4 button div[style*="background"] i {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: white !important;
+}
+
+/* Override any color changes when hovering over the group */
+.group:hover div.mb-4 button i[class*="text-white"] {
+  color: white !important;
+}
+
+/* Force the icon to maintain white color regardless of group state */
+.group div.mb-4 button div[style*="background"] i[class*="text-white"] {
+  color: white !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Ultimate protection: override ANY state changes */
+.group label:hover ~ div.mb-4 button div[style*="background"] i {
+  color: white !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.group *:hover ~ div.mb-4 button div[style*="background"] i {
+  color: white !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Modal header animation */
 .modal-header {
   opacity: 0;
