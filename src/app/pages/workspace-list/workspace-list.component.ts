@@ -6,12 +6,21 @@ import { animate, createTimeline, stagger } from 'animejs';
 import { CreateModalComponent, ModalConfig, CreateItemData } from '../../components/create-modal/create-modal.component';
 
 interface Workspace {
-  id: number;
-  name: string;
-  description: string;
-  theme: string;
+  id: string;
+  title: string;
+  desc: string;
+  cover: string;
+  theme: string; // Theme identifier for API compatibility
+  themeColor: string; // Hex color code (e.g., '#0075A2')
   icon: string;
-  taskCount: number;
+  lastActivity: string;
+  tasks: {
+    total: number;
+    completed: number;
+    pending: number;
+  };
+  members: number;
+  boards: number;
   isFavorite: boolean;
 }
 
@@ -229,6 +238,42 @@ viewMode: 'grid' | 'list' = 'grid';
       boards: 2,
       isFavorite: true
     },
+    {
+      id: 'ws-custom-1',
+      title: 'Proyecto Personal',
+      desc: 'Mi espacio creativo personal con iconos únicos.',
+      cover: '/assets/FlowTask.png',
+      theme: 'custom',
+      themeColor: '#8B5CF6', // Púrpura personalizado
+      icon: 'fas fa-rocket',
+      lastActivity: '2 días',
+      tasks: {
+        total: 15,
+        completed: 10,
+        pending: 5
+      },
+      members: 1,
+      boards: 3,
+      isFavorite: true
+    },
+    {
+      id: 'ws-custom-2',
+      title: 'Innovación Verde',
+      desc: 'Proyectos de sostenibilidad y eco-tech.',
+      cover: '/assets/FlowTask.png',
+      theme: 'custom',
+      themeColor: '#22C55E', // Verde personalizado
+      icon: 'fas fa-leaf',
+      lastActivity: '5 horas',
+      tasks: {
+        total: 22,
+        completed: 18,
+        pending: 4
+      },
+      members: 7,
+      boards: 4,
+      isFavorite: false
+    },
   ];
 
   // Mensajes dinámicos de bienvenida
@@ -284,6 +329,19 @@ viewMode: 'grid' | 'list' = 'grid';
       'lime': 'bg-[#84CC16]'
     };
     return themeMap[theme] || 'bg-[#0075A2]';
+  }
+
+  // New method to get style object for dynamic colors
+  getWorkspaceIconStyle(workspace: any): any {
+    return {
+      'background': `linear-gradient(135deg, ${workspace.themeColor}, ${workspace.themeColor}dd)`,
+      'box-shadow': `0 4px 12px ${workspace.themeColor}40`
+    };
+  }
+
+  // Get workspace color for dynamic styling
+  getWorkspaceColor(workspace: any): string {
+    return workspace.themeColor || '#0075A2';
   }
 
   // Nuevos colores más vivos para modo dark

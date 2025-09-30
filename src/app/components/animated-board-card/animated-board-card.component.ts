@@ -6,7 +6,8 @@ export interface BoardCardData {
   title: string;
   description: string;
   icon: string;
-  color: string;
+  color: string; // Hex color code (e.g., '#0075A2')
+  theme?: string; // Optional theme identifier for future API compatibility
   progress: number;
   completed: number;
   pending: number;
@@ -18,58 +19,66 @@ export interface BoardCardData {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div #cardElement class="animate-element group list-card bg-gray-50 dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl p-4 m-2"
+    <!-- Board Card with Modal Preview Design -->
+    <div #cardElement class="animate-element group bg-gray-700 rounded-lg shadow-2xl overflow-hidden border border-gray-600 transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl mb-5"
          (mouseenter)="onCardHoverEnter($event)" (mouseleave)="onCardHoverLeave($event)"
          style="opacity: 0; transform: translateY(20px) scale(0.96);">
       
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center space-x-3">
-          <div #iconContainer class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg">
-            <i [class]="'fas ' + data.icon + ' text-white'"></i>
+      <!-- Board Header -->
+      <div class="px-4 py-3 bg-gray-800 border-b border-gray-600 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div #iconContainer class="w-8 h-8 rounded-md flex items-center justify-center shadow-lg icon-container"
+               [style]="getIconContainerStyle()">
+            <i [class]="'fas ' + data.icon + ' text-white text-sm'"></i>
           </div>
           <div>
-            <h3 #titleElement class="font-bold text-gray-900 dark:text-white transition-colors duration-200">
+            <h3 #titleElement class="text-white font-bold text-base truncate max-w-40">
               {{ data.title }}
             </h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">{{ data.description }}</p>
+            <p class="text-gray-300 text-xs">{{ data.description }}</p>
           </div>
         </div>
-        <button #buttonElement class="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-150 hover:scale-105 hover:shadow-md">
-          <span>Ver Board</span>
-          <i class="fas fa-external-link-alt ml-1.5 text-[10px]"></i>
+        <button #buttonElement class="text-white px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 hover:opacity-90 hover:scale-105"
+                [style]="getButtonStyle()">
+          Ver Board <i class="fas fa-external-link-alt ml-1"></i>
         </button>
       </div>
       
-      <!-- Progress Bar Animada -->
-      <div class="mb-3">
-        <div class="flex justify-between text-xs mb-2">
-          <span class="text-gray-600 dark:text-gray-400">Progreso</span>
-          <span #progressTextContainer class="font-bold text-blue-600 dark:text-blue-400">
-            <span #progressText>0</span>%
-          </span>
-        </div>
-        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
-          <div #progressBar class="h-2.5 rounded-full transition-all duration-1000 ease-out"
-               style="width: 0%; background-color: #6B7280;">
+      <!-- Progress Section -->
+      <div class="p-4 bg-gray-750">
+        <div class="mb-3">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-gray-300 text-sm font-medium">Progreso</span>
+            <span #progressTextContainer class="text-sm font-bold"
+                  [style]="getProgressTextStyle()">
+              <span #progressText>0</span>%
+            </span>
+          </div>
+          <div class="w-full h-2 bg-gray-600 rounded-full overflow-hidden">
+            <div #progressBar class="h-full rounded-full transition-all duration-800"
+                 [style]="getProgressBarStyle()"
+                 style="width: 0%;"></div>
           </div>
         </div>
-      </div>
-      
-      <!-- Estadísticas con números animados -->
-      <div class="flex justify-between text-xs">
-        <div class="flex items-center space-x-4">
-          <span class="flex items-center text-green-600 dark:text-green-400">
-            <i class="fas fa-check-circle mr-1"></i>
-            <strong #completedNumber>0</strong>&nbsp;Completadas
-          </span>
-          <span class="flex items-center text-orange-600 dark:text-orange-400">
-            <i class="fas fa-clock mr-1"></i>
-            <strong #pendingNumber>0</strong>&nbsp;Pendientes
+        
+        <!-- Stats -->
+        <div class="flex items-center gap-4 text-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span class="text-green-400 font-medium">
+              <span #completedNumber>0</span> Completadas
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+            <span class="text-orange-400 font-medium">
+              <span #pendingNumber>0</span> Pendientes
+            </span>
+          </div>
+          <span class="text-gray-400 ml-auto">
+            Total: <span #totalNumber>0</span>
           </span>
         </div>
-        <span class="text-gray-500 dark:text-gray-400">
-          Total:&nbsp;<strong #totalNumber>0</strong>
-        </span>
       </div>
     </div>
   `,
@@ -80,6 +89,21 @@ export interface BoardCardData {
     
     .animate-element {
       will-change: transform, opacity;
+    }
+
+    /* Custom gray shade for progress section */
+    .bg-gray-750 {
+      background-color: #374151; /* Between gray-700 and gray-800 */
+    }
+
+    /* Enhanced shadow for hover */
+    .hover\\:shadow-3xl:hover {
+      box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Force icon container color */
+    .icon-container {
+      background-color: var(--icon-bg-color) !important;
     }
   `]
 })
@@ -111,7 +135,34 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
   ngOnInit(): void {
     if (!this.data) {
       console.warn('AnimatedBoardCard: No se proporcionaron datos');
+    } else {
+      console.log('AnimatedBoardCard recibió datos:', this.data);
     }
+  }
+
+  getIconContainerStyle(): any {
+    return {
+      'background-color': this.data.color + ' !important',
+      '--icon-bg-color': this.data.color
+    };
+  }
+
+  getButtonStyle(): any {
+    return {
+      'background-color': this.data.color + ' !important'
+    };
+  }
+
+  getProgressTextStyle(): any {
+    return {
+      'color': this.data.color + ' !important'
+    };
+  }
+
+  getProgressBarStyle(): any {
+    return {
+      'background': `linear-gradient(90deg, ${this.data.color}, ${this.data.color}dd) !important`
+    };
   }
 
   ngAfterViewInit(): void {
@@ -120,52 +171,39 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private setElementColors(): void {
-    const colorMap: { [key: string]: { bg: string, light: string, dark: string } } = {
-      'blue': { bg: '#3B82F6', light: '#DBEAFE', dark: '#2563EB' },
-      'purple': { bg: '#8B5CF6', light: '#EDE9FE', dark: '#7C3AED' },
-      'emerald': { bg: '#10B981', light: '#D1FAE5', dark: '#059669' }
-    };
+    // Usar directamente el color del data en lugar de mapeo fijo
+    const boardColor = this.data.color;
 
-    const colors = colorMap[this.data.color] || { bg: '#6B7280', light: '#F3F4F6', dark: '#4B5563' };
-
-    // Establecer color del icono
+    // Establecer color del icono - ya no es necesario porque usamos getIconContainerStyle()
     if (this.iconContainer) {
-      this.iconContainer.nativeElement.style.backgroundColor = colors.bg;
+      this.iconContainer.nativeElement.style.backgroundColor = boardColor;
     }
 
-    // Establecer color del texto del progreso
+    // Establecer color del texto del progreso - ya no es necesario porque usamos getProgressTextStyle()
     if (this.progressTextContainer) {
-      this.progressTextContainer.nativeElement.style.color = colors.dark;
+      this.progressTextContainer.nativeElement.style.color = boardColor;
     }
 
-    // Establecer botón con efecto glassmorphism dinámico sin glow
+    // Establecer botón usando el color del board
     if (this.buttonElement) {
       const button = this.buttonElement.nativeElement;
-      // Crear gradiente dinámico basado en el color de la carta
-      const lightColor = this.hexToRgba(colors.bg, 0.1);
-      const mediumColor = this.hexToRgba(colors.bg, 0.2);
       
-      button.style.background = `linear-gradient(135deg, ${lightColor}, ${mediumColor})`;
+      // Aplicar el color directo del board al botón
+      button.style.backgroundColor = boardColor;
       button.style.color = '#ffffff';
-      button.style.border = `1px solid ${this.hexToRgba(colors.bg, 0.3)}`;
-      button.style.backdropFilter = 'blur(20px)';
+      button.style.border = `1px solid ${boardColor}`;
       button.style.boxShadow = `0 2px 8px rgba(0, 0, 0, 0.1)`;
-      button.style.transform = 'scale(1)';
       
       button.addEventListener('mouseenter', () => {
-        const hoverLight = this.hexToRgba(colors.bg, 0.25);
-        const hoverMedium = this.hexToRgba(colors.bg, 0.35);
-        button.style.background = `linear-gradient(135deg, ${hoverLight}, ${hoverMedium})`;
-        button.style.border = `1px solid ${this.hexToRgba(colors.bg, 0.5)}`;
-        button.style.boxShadow = `0 4px 12px rgba(0, 0, 0, 0.15)`;
-        button.style.transform = 'scale(1.05) translateY(-2px)';
+        button.style.opacity = '0.9';
+        button.style.transform = 'scale(1.05)';
+        button.style.boxShadow = `0 4px 12px ${this.hexToRgba(boardColor, 0.3)}`;
       });
       
       button.addEventListener('mouseleave', () => {
-        button.style.background = `linear-gradient(135deg, ${lightColor}, ${mediumColor})`;
-        button.style.border = `1px solid ${this.hexToRgba(colors.bg, 0.3)}`;
+        button.style.opacity = '1';
+        button.style.transform = 'scale(1)';
         button.style.boxShadow = `0 2px 8px rgba(0, 0, 0, 0.1)`;
-        button.style.transform = 'scale(1) translateY(0px)';
       });
     }
   }
@@ -216,14 +254,9 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
     const progressEl = this.progressBar.nativeElement;
     const progressTextEl = this.progressText.nativeElement;
     
-    // Establecer el color de la barra según el tipo
-    const colorMap: { [key: string]: string } = {
-      'blue': '#3B82F6',
-      'purple': '#8B5CF6', 
-      'emerald': '#10B981'
-    };
-    
-    progressEl.style.backgroundColor = colorMap[this.data.color] || '#6B7280';
+    // Usar directamente el color del board
+    const gradient = `linear-gradient(90deg, ${this.data.color}, ${this.data.color}dd)`;
+    progressEl.style.background = gradient;
     
     setTimeout(() => {
       // Animar la barra

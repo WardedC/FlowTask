@@ -124,7 +124,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
         fromDark: '#0EA5E9',
         toDark: '#8B5CF6'
       },
-      accentColor: '#2EC4B6',
+      accentColor: '#0075A2',
       statusText: 'Actualizadas hoy'
     },
     {
@@ -163,7 +163,8 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       title: 'Board Desarrollo',
       description: 'Sprint actual en progreso',
       icon: 'fa-code',
-      color: 'blue',
+      color: '#0066CC', // Azul profesional para desarrollo
+      theme: 'development',
       progress: 75,
       completed: 12,
       pending: 4,
@@ -173,7 +174,8 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       title: 'Board Diseño',
       description: 'UI/UX en proceso',
       icon: 'fa-palette',
-      color: 'purple',
+      color: '#6A4C93', // Púrpura diseño
+      theme: 'design',
       progress: 90,
       completed: 9,
       pending: 1,
@@ -183,11 +185,45 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       title: 'Board Testing',
       description: 'QA y pruebas',
       icon: 'fa-bug',
-      color: 'emerald',
+      color: '#28A745', // Verde profesional para testing
+      theme: 'testing',
       progress: 45,
       completed: 3,
       pending: 4,
       total: 7
+    },
+    {
+      title: 'Marketing Campaign',
+      description: 'Estrategia Q1 2025',
+      icon: 'fa-bullhorn',
+      color: '#FF6B35', // Naranja profesional para marketing
+      theme: 'marketing',
+      progress: 60,
+      completed: 8,
+      pending: 5,
+      total: 13
+    },
+    {
+      title: 'User Research',
+      description: 'Investigación de usuarios',
+      icon: 'fa-users',
+      color: '#17A2B8', // Azul turquesa profesional para research
+      theme: 'research',
+      progress: 30,
+      completed: 2,
+      pending: 5,
+      total: 7
+    },
+    {
+      title: 'Backend API',
+      description: 'Desarrollo de microservicios',
+      icon: 'fa-server',
+      color: '#6F42C1', // Púrpura profesional para backend
+      theme: 'backend',
+      progress: 85,
+      completed: 17,
+      pending: 3,
+      total: 20
     }
   ];
 
@@ -589,25 +625,30 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onBoardCreated(boardData: CreateItemData): void {
+    // Debug: Log received data
+    console.log('Datos recibidos del modal:', boardData);
+    
     // Convert CreateItemData to BoardCardData format
     const newBoardCard: BoardCardData = {
       title: boardData.name,
       description: boardData.description,
       icon: boardData.icon,
       color: boardData.color,
+      theme: boardData.theme || 'custom', // Use theme from boardData or 'custom' as fallback
       progress: 0,
       completed: 0,
       pending: 0,
       total: 0
     };
 
+    // Debug: Log created board card
+    console.log('Nueva tarjeta de board creada:', newBoardCard);
+
     // Add to boardCardsData array
     this.boardCardsData.push(newBoardCard);
     
     // Close modal
     this.closeCreateBoardModal();
-
-    console.log('Nuevo board creado:', newBoardCard);
   }
 
   resetForm(): void {
@@ -671,8 +712,10 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isValidEmail(email: string): boolean {
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+
   }
 
   isFormValid(): boolean {
@@ -686,22 +729,13 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
     // Generate unique ID
     const newId = 'board-' + Date.now();
     
-    // Mapeo de colores para el componente AnimatedBoardCard
-    const colorMap: { [key: string]: 'blue' | 'purple' | 'green' | 'orange' } = {
-      '#0075A2': 'blue',
-      '#6A4C93': 'purple', 
-      '#10B981': 'green',
-      '#F97316': 'orange'
-    };
-    
-    const boardColor = colorMap[this.newBoard.customColor] || 'blue';
-    
-    // Create new board object
+    // Create new board object with hex colors and theme support
     const newBoardData: BoardCardData = {
       title: this.newBoard.name,
       description: this.newBoard.description,
       icon: this.newBoard.customIcon.replace('fas fa-', 'fa-'),
-      color: boardColor,
+      color: this.newBoard.customColor, // Use hex color directly
+      theme: this.newBoard.theme || 'custom', // Use theme or 'custom' as fallback
       progress: 0,
       completed: 0,
       pending: 0,

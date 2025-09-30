@@ -64,15 +64,14 @@ export interface StatsCardData {
             <div class="flex items-center space-x-3">
               <div class="w-3 h-3 rounded-full animate-pulse" 
                    [ngClass]="{
-                     'bg-[#2EC4B6]': data.title === 'Total',
+                     'bg-[#0075A2]': data.title === 'Total',
                      'bg-green-500': data.title === 'Completadas',
                      'bg-orange-500': data.title === 'En proceso'
                    }"></div>
               <p #valueNumber class="text-2xl font-bold transition-colors duration-200"
+                 [style.color]="getNumberColor()"
                  [ngClass]="{
-                   'text-gray-900 dark:text-white group-hover:text-[var(--ft-cerulean)]': data.title === 'Total',
-                   'text-green-600 dark:text-green-400 group-hover:text-[#2EC4B6]': data.title === 'Completadas',
-                   'text-orange-600 dark:text-orange-400 group-hover:text-[#FFB400]': data.title === 'En proceso'
+                   'group-hover:text-[#0075A2]': data.title === 'Total'
                  }">
                 {{ data.value }}
               </p>
@@ -82,7 +81,7 @@ export interface StatsCardData {
             <div class="flex items-center">
               <i class="fas text-lg"
                  [ngClass]="{
-                   'fa-tasks text-[#2EC4B6]': data.title === 'Total',
+                   'fa-tasks text-[#0075A2]': data.title === 'Total',
                    'fa-check-circle text-green-500': data.title === 'Completadas',
                    'fa-clock text-orange-500': data.title === 'En proceso'
                  }"></i>
@@ -166,6 +165,21 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     // Validación de datos requeridos
     if (!this.data) {
       console.warn('AnimatedStatsCard: No se proporcionaron datos');
+    }
+  }
+
+  getNumberColor(): string {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    switch (this.data.title) {
+      case 'Total':
+        return isDark ? '#ffffff' : '#1f2937'; // Blanco en modo oscuro, gris oscuro en modo claro
+      case 'Completadas':
+        return '#ffffff';
+      case 'En proceso':
+        return '#ffffff';
+      default:
+        return isDark ? '#ffffff' : '#1f2937';
     }
   }
 
