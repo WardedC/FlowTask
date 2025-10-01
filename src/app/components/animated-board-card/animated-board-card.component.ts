@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate } from 'animejs';
 
@@ -39,7 +39,8 @@ export interface BoardCardData {
           </div>
         </div>
         <button #buttonElement class="text-white px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 hover:opacity-90 hover:scale-105"
-                [style]="getButtonStyle()">
+                [style]="getButtonStyle()"
+                (click)="onBoardClick()">
           Ver Board <i class="fas fa-external-link-alt ml-1"></i>
         </button>
       </div>
@@ -110,6 +111,7 @@ export interface BoardCardData {
 export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() data!: BoardCardData;
   @Input() animationDelay: number = 0;
+  @Output() boardClick = new EventEmitter<BoardCardData>();
   
   @ViewChild('cardElement', { static: false }) cardElement!: ElementRef<HTMLElement>;
   @ViewChild('progressBar', { static: false }) progressBar!: ElementRef<HTMLElement>;
@@ -339,5 +341,9 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
         target.style.willChange = '';
       }
     });
+  }
+
+  onBoardClick(): void {
+    this.boardClick.emit(this.data);
   }
 }

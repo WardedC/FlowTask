@@ -834,4 +834,16 @@ export class WorkspaceComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
   }
+
+  // Método para navegar al board específico
+  onBoardClick(boardData: BoardCardData): void {
+    // Generar ID basado en el título del board (en producción sería un ID real)
+    const boardId = this.generateBoardId(boardData.title);
+    this.router.navigateByUrl(`/home/workspaces/${this.workspaceId}/boards/${boardId}`);
+  }
+
+  private generateBoardId(title: string): string {
+    // Convertir título a ID simple (en producción usarías el ID real del board)
+    return title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  }
 }

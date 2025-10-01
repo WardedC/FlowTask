@@ -1,0 +1,270 @@
+<div [class]="'min-h-screen p-6 ' + 
+     (isDarkMode ? 'workspace-bg-dark' : 'workspace-bg-light')">
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Header del Board -->
+    <div class="board-header mb-8 flex items-center justify-between opacity-0">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg"
+             [style.background]="boardGradient">
+          <i [class]="boardIconClass"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ boardTitle }}</h1>
+          <p class="text-gray-600 dark:text-gray-400">{{ boardDescription }}</p>
+        </div>
+      </div>
+      
+      <!-- Stats y botones de acción -->
+      <div class="flex items-center space-x-6">
+        <!-- Stats rápidas -->
+        <div class="hidden md:flex items-center space-x-4 text-sm">
+          <div class="flex items-center px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg border border-white/40 dark:border-gray-600/50">
+            <div class="w-2 h-2 bg-gray-500 rounded-full mr-2"></div>
+            <span class="text-gray-700 dark:text-gray-300">Total: {{ boardData?.totalTasks || 0 }}</span>
+          </div>
+          <div class="flex items-center px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg border border-white/40 dark:border-gray-600/50">
+            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            <span class="text-gray-700 dark:text-gray-300">Completas: {{ boardData?.completedTasks || 0 }}</span>
+          </div>
+          <div class="flex items-center px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg border border-white/40 dark:border-gray-600/50">
+            <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+            <span class="text-gray-700 dark:text-gray-300">Pendientes: {{ boardData?.pendingTasks || 0 }}</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <button 
+            (click)="goBack()"
+            class="flex items-center px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Volver al Workspace
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kanban-board grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      
+      <!-- Columnas del board -->
+      <div *ngFor="let column of boardData?.columns; trackBy: trackByColumnId" 
+           class="board-column bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-all duration-300 overflow-hidden opacity-0"
+           [attr.data-column-id]="column.id"
+           role="list"
+           [attr.aria-label]="column.title + ' - ' + column.tasks.length + ' tareas'"
+           aria-dropeffect="move">
+        
+        <!-- Header de la columna -->
+        <div class="relative h-14 border-b border-gray-200 dark:border-gray-700">
+          <div class="absolute inset-0 flex items-center justify-between px-6">
+            <div class="flex items-center">
+              <div class="w-3 h-3 rounded-full mr-3 shadow-sm"
+                   [style.background-color]="column.color"></div>
+              <h3 class="text-md font-bold text-gray-800 dark:text-gray-100">{{ column.title }}</h3>
+              <span class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                {{ column.tasks.length }}
+              </span>
+            </div>
+            
+            <!-- Botón para agregar tarea -->
+            <button 
+              (click)="openCreateTaskModal(column.id)"
+              class="w-6 h-6 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center">
+              <i class="fas fa-plus text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Lista de tareas -->
+        <div class="p-4 space-y-3 min-h-[200px]">
+          
+          <!-- Tarjetas de tareas -->
+          <div *ngFor="let task of column.tasks; trackBy: trackByTaskId; let i = index" 
+               class="task-card bg-gray-50 dark:bg-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-move"
+               [class.task-card-visible]="true"
+               [class.task-card-new]="isNewTask(task.id)"
+               [attr.data-task-id]="task.id"
+               [appDraggableSnap]="task"
+               [dragConfig]="dndConfig"
+               (dragStart)="onDragStart($event)"
+               (drop)="onDrop($event)"
+               (cancel)="onDragCancel($event)"
+               (click)="$event.stopPropagation()"
+               role="listitem"
+               tabindex="0"
+               [attr.aria-label]="'Tarea: ' + task.title + '. Presione espacio o enter para mover.'"
+               aria-grabbed="false"
+               [style.animation-delay.ms]="i * 100">
+            
+            <!-- Header de la tarea -->
+            <div class="flex items-start justify-between mb-2">
+              <h4 class="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 flex-1">
+                {{ task.title }}
+              </h4>
+              <button 
+                (click)="deleteTask(task.id)"
+                class="ml-2 w-6 h-6 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-times text-xs text-gray-400 hover:text-red-500"></i>
+              </button>
+            </div>
+            
+            <!-- Descripción de la tarea -->
+            <p *ngIf="task.description" class="text-xs text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+              {{ task.description }}
+            </p>
+            
+            <!-- Footer de la tarea -->
+            <div class="flex items-center justify-between">
+              
+              <!-- Prioridad y fecha -->
+              <div class="flex items-center space-x-2">
+                <!-- Prioridad -->
+                <div class="flex items-center px-2 py-1 rounded-md text-xs font-medium"
+                     [style.background-color]="getPriorityColor(task.priority) + '20'"
+                     [style.color]="getPriorityColor(task.priority)">
+                  <div class="w-1.5 h-1.5 rounded-full mr-1.5"
+                       [style.background-color]="getPriorityColor(task.priority)"></div>
+                  {{ getPriorityText(task.priority) }}
+                </div>
+                
+                <!-- Fecha de vencimiento -->
+                <div *ngIf="task.due_date" 
+                     class="flex items-center px-2 py-1 rounded-md text-xs font-medium"
+                     [class.bg-red-100]="isOverdue(task.due_date)"
+                     [class.text-red-700]="isOverdue(task.due_date)"
+                     [class.bg-gray-100]="!isOverdue(task.due_date)"
+                     [class.text-gray-600]="!isOverdue(task.due_date)"
+                     [class.dark:bg-red-900]="isOverdue(task.due_date)"
+                     [class.dark:text-red-300]="isOverdue(task.due_date)"
+                     [class.dark:bg-gray-600]="!isOverdue(task.due_date)"
+                     [class.dark:text-gray-300]="!isOverdue(task.due_date)">
+                  <i class="fas fa-calendar-alt mr-1"></i>
+                  {{ formatDate(task.due_date) }}
+                </div>
+              </div>
+              
+              <!-- Assignees (futuro) -->
+              <div class="flex items-center">
+                <!-- Placeholder para avatares de asignados -->
+                <div class="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center">
+                  <i class="fas fa-user text-xs text-white"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Mensaje cuando no hay tareas -->
+          <div *ngIf="column.tasks.length === 0" 
+               class="flex flex-col items-center justify-center py-8 text-gray-400 dark:text-gray-500">
+            <i class="fas fa-inbox text-2xl mb-2"></i>
+            <p class="text-sm">No hay tareas aquí</p>
+            <button 
+              (click)="openCreateTaskModal(column.id)"
+              class="mt-2 text-xs px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors">
+              Agregar primera tarea
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Crear Tarea -->
+<div *ngIf="isTaskModalOpen" 
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+     (click)="closeCreateTaskModal()">
+  
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Header del modal -->
+    <div class="relative h-16 bg-gradient-to-r from-[#0075A2] to-[#6A4C93] rounded-t-2xl">
+      <div class="absolute inset-0 flex items-center justify-between px-6">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-tasks text-white"></i>
+          </div>
+          <h2 class="text-lg font-bold text-white">Nueva Tarea</h2>
+        </div>
+        <button 
+          (click)="closeCreateTaskModal()"
+          class="w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center">
+          <i class="fas fa-times text-white"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Contenido del modal -->
+    <div class="p-6 space-y-4">
+      
+      <!-- Título de la tarea -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Título de la tarea *
+        </label>
+        <input 
+          type="text"
+          [(ngModel)]="newTask.title"
+          placeholder="Escribe el título de la tarea..."
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0075A2] focus:border-transparent transition-colors text-gray-900 dark:text-white"
+          maxlength="150">
+      </div>
+      
+      <!-- Descripción -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Descripción
+        </label>
+        <textarea 
+          [(ngModel)]="newTask.description"
+          placeholder="Describe los detalles de la tarea..."
+          rows="3"
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0075A2] focus:border-transparent transition-colors text-gray-900 dark:text-white resize-none">
+        </textarea>
+      </div>
+      
+      <!-- Prioridad -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Prioridad
+        </label>
+        <select 
+          [(ngModel)]="newTask.priority"
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0075A2] focus:border-transparent transition-colors text-gray-900 dark:text-white">
+          <option [value]="TaskPriority.LOW">Baja</option>
+          <option [value]="TaskPriority.MEDIUM">Media</option>
+          <option [value]="TaskPriority.HIGH">Alta</option>
+          <option [value]="TaskPriority.URGENT">Urgente</option>
+        </select>
+      </div>
+      
+      <!-- Fecha de vencimiento -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Fecha de vencimiento
+        </label>
+        <input 
+          type="date"
+          [(ngModel)]="newTask.due_date"
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0075A2] focus:border-transparent transition-colors text-gray-900 dark:text-white">
+      </div>
+    </div>
+    
+    <!-- Footer del modal -->
+    <div class="flex items-center justify-end space-x-3 p-6 pt-0">
+      <button 
+        (click)="closeCreateTaskModal()"
+        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-colors">
+        Cancelar
+      </button>
+      <button 
+        (click)="createTask()"
+        [disabled]="!newTask.title.trim()"
+        class="px-4 py-2 text-sm font-medium text-white bg-[#0075A2] hover:bg-[#005f82] disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors">
+        Crear Tarea
+      </button>
+    </div>
+  </div>
+</div>

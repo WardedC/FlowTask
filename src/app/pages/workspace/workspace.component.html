@@ -79,7 +79,8 @@
               <app-animated-board-card 
                 *ngFor="let boardData of boardCardsData; let i = index; trackBy: trackByBoardTitle"
                 [data]="boardData"
-                [animationDelay]="i * 100">
+                [animationDelay]="i * 100"
+                (boardClick)="onBoardClick($event)">
               </app-animated-board-card>
               
             </div>

@@ -3,13 +3,15 @@ import { HomeComponent } from './pages/home/home.component';
 import { LogginComponent } from './pages/loggin/loggin.component';
 import { WorkspaceListComponent } from './pages/workspace-list/workspace-list.component';
 import { WorkspaceComponent } from './pages/workspace/workspace.component';
+import { BoardComponent } from './pages/board/board.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: HomeComponent, 
       children: [ 
         { path: '', component: WorkspaceListComponent },
-        { path: 'workspaces/:id', component: WorkspaceComponent }
+        { path: 'workspaces/:id', component: WorkspaceComponent },
+        { path: 'workspaces/:id/boards/:boardId', component: BoardComponent }
       ]
     },
     { path: 'login', component: LogginComponent },
