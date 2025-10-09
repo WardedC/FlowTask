@@ -8,7 +8,7 @@ import { animate, createTimeline, stagger } from 'animejs';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './loggin.component.html',
   styleUrl: './loggin.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class LogginComponent implements AfterViewInit {
   form: FormGroup<{

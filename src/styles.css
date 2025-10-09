@@ -84,3 +84,193 @@
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(252, 255, 252, 0.2);
 }
+
+/* ====================================
+   🚀 ANGULAR CDK DRAG & DROP FIX
+   60FPS PERFORMANCE OPTIMIZATION
+   ==================================== */
+
+/* 
+  SOLUCIÓN DEFINITIVA: Preview que sigue el cursor perfectamente
+  - Position fixed forzado con top/left en 0
+  - Transform 3D para GPU acceleration
+  - Z-index muy alto para visibilidad
+  - Pointer events none para detección correcta de drop zones
+*/
+
+/* ====================================
+   🎯 PREVIEW OPTIMIZATION - POSICIONAMIENTO PERFECTO
+   ==================================== */
+
+/* 
+  🚨 ESTILOS GLOBALES PARA CDK DRAG PREVIEW
+  
+  IMPORTANTE: Estos estilos se aplican globalmente
+  Si hay conflictos con estilos del componente, el componente gana
+*/
+
+/* Contenedor global del preview (creado dinámicamente por Angular CDK) */
+.cdk-drag-preview {
+  /* ✨ CRÍTICO: NO usar !important en transform */
+  /* Angular CDK necesita modificar transform dinámicamente */
+  will-change: transform;
+  /* NO incluir transform aquí - CDK lo maneja completamente */
+  
+  /* ✨ Position fixed EN ORIGEN (0,0) - CDK calcula el offset */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  
+  /* ✨ z-index MUY alto para estar sobre todo */
+  z-index: 10000 !important;
+  
+  /* ✨ Pointer events NONE - crítico para drop detection */
+  pointer-events: none !important;
+  
+  /* ✨ Box-sizing correcto */
+  box-sizing: border-box !important;
+  
+  /* ✨ NO selección de texto */
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  
+  /* ✨ Touch optimizations */
+  touch-action: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  
+  /* ✨ Prevenir WebKit drag nativo */
+  -webkit-user-drag: none !important;
+  
+  /* ✨ Antialiasing optimizado para movimiento suave */
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  backface-visibility: hidden !important;
+  perspective: 1000px !important;
+  
+  /* ✨ Ancho del preview - evita recálculos */
+  max-width: 400px;
+  width: auto;
+  
+  /* ⚠️ NO usar backdrop-filter - mata performance */
+  /* ⚠️ NO usar box-shadow pesado */
+  /* ⚠️ NO usar filter o blur */
+  /* ⚠️ NO usar transition en transform - CDK lo maneja directamente */
+  /* ⚠️ NO usar transform con !important - previene que CDK mueva el preview */
+}
+
+/* ====================================
+   🎯 DROP LIST OPTIMIZATION
+   ==================================== */
+
+/* Asegurar que el drop list tenga contexto de posición */
+.cdk-drop-list {
+  position: relative !important;
+  
+  /* 🚀 Aceleración GPU */
+  will-change: auto;
+  transform: translate3d(0, 0, 0);
+  
+  /* 🚀 Aislamiento de repaint */
+  isolation: isolate;
+}
+
+/* ====================================
+   🎯 DRAG ELEMENT OPTIMIZATION
+   ==================================== */
+
+/* El elemento original durante el drag */
+.cdk-drag {
+  /* 🚀 Aceleración GPU */
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  
+  /* 🚀 Transición optimizada con easing natural */
+  transition: transform 250ms cubic-bezier(0.2, 0, 0, 1);
+  
+  /* 🚀 Touch optimizations */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 🚀 NO selección durante drag */
+  user-select: none;
+  -webkit-user-select: none;
+  
+  /* 🚀 Antialiasing para suavidad */
+  -webkit-font-smoothing: subpixel-antialiased;
+  backface-visibility: hidden;
+}
+
+/* ====================================
+   🎯 ANIMATION OPTIMIZATION
+   ==================================== */
+
+/* Animación de retorno si el drop falla */
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1) !important;
+  
+  /* 🚀 Aceleración GPU */
+  will-change: transform !important;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Lista durante drag - optimizar reordenamiento */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ====================================
+   🎯 BODY OPTIMIZATION DURANTE DRAG
+   ==================================== */
+
+/* Cuando está en drag, simplificar renderizado global */
+body.is-dragging {
+  /* 🚀 Prevenir scroll durante drag */
+  overflow: hidden;
+  
+  /* 🚀 Cursor global */
+  cursor: grabbing !important;
+}
+
+body.is-dragging * {
+  /* 🚀 Reducir complejidad de cursor */
+  cursor: inherit !important;
+}
+
+body.is-dragging .cdk-drag-preview {
+  cursor: grabbing !important;
+}
+
+/* ====================================
+   🎯 MOBILE & TOUCH OPTIMIZATION
+   ==================================== */
+
+/* Prevenir overscroll bounce en iOS durante drag */
+body.is-dragging {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
+/* Prevenir pull-to-refresh en Chrome Android */
+@media (pointer: coarse) {
+  .cdk-drag {
+    /* 🚀 Mejor handling táctil */
+    touch-action: pan-y !important;
+  }
+  
+  .cdk-drop-list {
+    /* 🚀 Suavizado táctil */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ====================================
+   🎯 ACCESSIBILITY
+   ==================================== */
+
+/* Focus visible durante keyboard navigation */
+.cdk-drag:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
