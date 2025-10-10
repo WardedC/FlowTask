@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate } from 'animejs';
+import { routes } from '../../app.routes';
+import { Router } from '@angular/router';
 
 export interface BoardCardData {
   title: string;
@@ -39,7 +41,8 @@ export interface BoardCardData {
           </div>
         </div>
         <button #buttonElement class="text-white px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 hover:opacity-90 hover:scale-105"
-                [style]="getButtonStyle()">
+                [style]="getButtonStyle()"
+                (click)="navigateToBoard()">
           Ver Board <i class="fas fa-external-link-alt ml-1"></i>
         </button>
       </div>
@@ -122,6 +125,8 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
   @ViewChild('titleElement', { static: false }) titleElement!: ElementRef<HTMLElement>;
   @ViewChild('buttonElement', { static: false }) buttonElement!: ElementRef<HTMLElement>;
 
+
+  constructor(private router: Router) {}
   private isDestroyed = false;
 
   // Función utilitaria para convertir hex a rgba
@@ -339,5 +344,10 @@ export class AnimatedBoardCardComponent implements OnInit, OnDestroy, AfterViewI
         target.style.willChange = '';
       }
     });
+  }
+
+  navigateToBoard(): void {
+    
+    this.router.navigate([`/home/board/1`]);
   }
 }

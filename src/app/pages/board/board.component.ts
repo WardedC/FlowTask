@@ -130,8 +130,8 @@ export class BoardComponent {
   }
 
   getColumnBadgeClass(index: number): string {
-    const theme = this.columnThemes[index].color;
-    return `bg-${theme}/10 text-${theme}`;
+    // Badge neutral y elegante para cualquier cantidad de columnas
+    return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
   }
 
   getColumnHoverClass(index: number): string {

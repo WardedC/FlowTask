@@ -11,7 +11,7 @@ export const routes: Routes = [
       children: [ 
         { path: '', component: WorkspaceListComponent },
         { path: 'workspaces/:id', component: WorkspaceComponent },
-        { path: 'board', component: BoardComponent }
+        { path: 'board/:id', component: BoardComponent },
       ]
     },
     { path: 'login', component: LogginComponent },
