@@ -52,4 +52,5 @@ export class ThemeService {
       body.classList.add('light');
     }
   }
+  
 }

@@ -1,28 +1,28 @@
 ﻿<!-- Board View - Kanban con Drag & Drop -->
-<div class="min-h-screen p-8">
+<div class="min-h-screen p-4">
   
   <!-- Header del Board - Estilo Workspace -->
-  <header class="mb-8">
+  <header class="mb-6">
     <div class="flex items-center justify-between">
       <!-- Lado izquierdo: Icono + Título -->
-      <div class="flex items-center space-x-4">
-        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg">
-          <i class="fas fa-columns text-white text-xl"></i>
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg">
+          <i class="fas fa-columns text-white text-lg"></i>
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Tablero de Proyecto</h1>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Gestiona tus tareas con drag & drop</p>
+          <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Tablero de Proyecto</h1>
+          <p class="text-xs text-gray-600 dark:text-gray-400">Gestiona tus tareas con drag & drop</p>
         </div>
       </div>
       
       <!-- Lado derecho: Botones de acción -->
-      <div class="flex items-center space-x-3">
-        <button class="flex items-center px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
-          <i class="fas fa-filter mr-2"></i>
+      <div class="flex items-center space-x-2">
+        <button class="flex items-center px-3 py-1.5 text-xs font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
+          <i class="fas fa-filter mr-1.5"></i>
           Filtrar
         </button>
-        <button class="flex items-center px-4 py-2.5 text-sm font-bold text-white bg-[#0075A2] hover:bg-[#005f82] rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
-          <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2.5">
+        <button class="flex items-center px-3 py-2 text-xs font-bold text-white bg-[#0075A2] hover:bg-[#005f82] rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+          <div class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center mr-2">
             <i class="fas fa-plus text-xs text-white"></i>
           </div>
           <span>Nueva Tarea</span>
@@ -31,70 +31,108 @@
     </div>
   </header>
   
-  <!-- Contenedor de Columnas Kanban -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    
-    <!-- Columnas generadas dinámicamente -->
-    <!-- 🚀 PERFORMANCE: trackBy evita re-render de todas las columnas -->
-    <div *ngFor="let col of columns; let i = index; trackBy: trackByColumnId" class="flex flex-col">
+  <!-- Contenedor flex para columnas + botón -->
+  <div class="flex gap-4">
+    <!-- Contenedor con scroll horizontal + cdkDropList para reordenar columnas -->
+    <div cdkDropList 
+         id="columns-drop-list"
+         cdkDropListOrientation="horizontal"
+         [cdkDropListData]="columns"
+         (cdkDropListDropped)="dropColumn($event)"
+         class="flex gap-4 overflow-x-auto pb-4">
+      
+      <!-- Columnas generadas dinámicamente con drag habilitado -->
+      <!-- 🚀 PERFORMANCE: trackBy evita re-render de todas las columnas -->
+      <div *ngFor="let col of columns; let i = index; trackBy: trackByColumnId" 
+           class="flex flex-col flex-shrink-0 w-72">
+      
+      <!-- Wrapper con cdkDrag SOLO para el reordenamiento de columna -->
+      <div cdkDrag
+           [cdkDragLockAxis]="'x'"
+           [attr.data-drag-type]="'column'"
+           class="flex flex-col">
       
       <!-- Columna envuelta en card estilo workspace -->
       <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl">
         
-        <!-- Header de columna h-16 con icono -->
-        <div class="relative h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div class="absolute inset-0 flex items-center justify-between px-5">
-            <div class="flex items-center gap-3">
+        <!-- Header de columna h-12 con icono - ÚNICO DRAG HANDLE -->
+        <div cdkDragHandle class="relative h-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 cursor-grab active:cursor-grabbing">
+          <div class="absolute inset-0 flex items-center justify-between px-3">
+            <div class="flex items-center gap-2">
               <!-- Icono de columna con color dinámico -->
-              <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-md" 
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-shadow" 
                    [ngClass]="getColumnColorClass(i)">
                 <i class="fas fa-grip-vertical text-white text-xs"></i>
               </div>
-              <h2 class="text-base font-bold text-gray-800 dark:text-gray-100">{{ col.title }}</h2>
-              <span class="px-3 py-1 text-sm font-bold rounded-full shadow-sm" 
+              <h2 class="text-sm font-bold text-gray-800 dark:text-gray-100">{{ col.title }}</h2>
+              <span class="px-2 py-0.5 text-xs font-bold rounded-full shadow-sm" 
                     [ngClass]="getColumnBadgeClass(i)">
                 {{ col.cards.length }}
               </span>
             </div>
-            <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                    (click)="$event.stopPropagation()">
               <i class="fas fa-ellipsis-h"></i>
             </button>
           </div>
         </div>
         
-        <!-- Drop zone SIN border dashed, fondo limpio -->
+        <!-- Drop zone de tarjetas - NO inicia drag de columna -->
         <div cdkDropList
              [id]="'cdk-drop-list-' + i"
              [cdkDropListData]="col.cards"
              [cdkDropListConnectedTo]="getConnectedLists()"
              (cdkDropListDropped)="drop($event)"
-             class="drop-zone flex-1 p-4 bg-gray-50 dark:bg-gray-900/30 min-h-[500px] space-y-3">
+             class="drop-zone flex-1 p-3 bg-gray-50 dark:bg-gray-900/30 min-h-[400px] space-y-2">
         
         <!-- Tarjetas -->
         <!-- 🚀 PERFORMANCE: trackBy es CRÍTICO - sin esto, Angular re-crea todas las tarjetas -->
         <div *ngFor="let card of col.cards; trackBy: trackByCardId"
              cdkDrag
+             [attr.data-drag-type]="'card'"
              (cdkDragStarted)="onDragStarted($event)"
              (cdkDragEnded)="onDragEnded($event)"
-             class="card-item group bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
+             [class]="'card-item group rounded-lg p-3 border shadow-sm hover:shadow-md transition-all duration-200 cursor-default ' + 
+                      (card.checked 
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' 
+                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700')"
              [attr.data-column-index]="i">
           
           <!-- Contenido de la tarjeta (visible siempre) -->
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <div class="w-1 h-8 rounded-full" [ngClass]="getColumnBarClass(i)"></div>
-              <div class="text-sm font-semibold text-gray-800 dark:text-white">{{ card.title }}</div>
+          <div class="flex items-start justify-between mb-1.5">
+            <div class="flex items-center gap-1.5">
+              <!-- Checkbox para marcar como completada -->
+              <button (click)="toggleCardCheck(card, $event)"
+                      [class]="'w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0 ' + 
+                               (card.checked 
+                                 ? 'bg-green-500 border-green-500 dark:bg-green-600 dark:border-green-600' 
+                                 : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-green-400 dark:hover:border-green-500')">
+                <i *ngIf="card.checked" class="fas fa-check text-white text-xs"></i>
+              </button>
+              <div class="w-0.5 h-6 rounded-full" [ngClass]="card.checked ? 'bg-green-500' : getColumnBarClass(i)"></div>
+              <div [class]="'text-sm font-semibold ' + 
+                           (card.checked 
+                             ? 'text-green-700 dark:text-green-400 line-through' 
+                             : 'text-gray-800 dark:text-white')">
+                {{ card.title }}
+              </div>
             </div>
-            <i class="fas fa-grip-vertical text-gray-300 transition-colors" 
+            <!-- Drag handle: Solo este ícono permite arrastrar la tarjeta -->
+            <i cdkDragHandle 
+               class="fas fa-grip-vertical text-gray-300 text-xs transition-colors cursor-grab hover:text-gray-500 dark:hover:text-gray-400 active:cursor-grabbing" 
                [ngClass]="getColumnGripClass(i)"></i>
           </div>
           
-          <p class="text-xs text-gray-500 dark:text-gray-400 ml-3" *ngIf="card.desc">{{ card.desc }}</p>
+          <p [class]="'text-xs ml-6 ' + 
+                     (card.checked 
+                       ? 'text-green-600 dark:text-green-500' 
+                       : 'text-gray-500 dark:text-gray-400')" 
+             *ngIf="card.desc">{{ card.desc }}</p>
           
           <!-- Card Footer -->
-          <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-            <div class="flex -space-x-2">
-              <div class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800"
+          <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-800"
                    [ngClass]="getColumnAvatarClass(i)"></div>
             </div>
             <div class="flex gap-2 text-xs text-gray-400">
@@ -104,23 +142,44 @@
           </div>
 
           <!-- ✨ DRAG PREVIEW: Diseño IDÉNTICO a la tarjeta original -->
-          <div *cdkDragPreview class="drag-preview bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg">
+          <div *cdkDragPreview 
+               [class]="'drag-preview rounded-lg p-3 border shadow-lg ' + 
+                        (card.checked 
+                          ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' 
+                          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700')">
             <!-- Header del preview -->
-            <div class="flex items-start justify-between mb-2">
-              <div class="flex items-center gap-2">
-                <div class="w-1 h-8 rounded-full" [ngClass]="getColumnBarClass(i)"></div>
-                <div class="text-sm font-semibold text-gray-800 dark:text-white">{{ card.title }}</div>
+            <div class="flex items-start justify-between mb-1.5">
+              <div class="flex items-center gap-1.5">
+                <!-- Checkbox en preview -->
+                <div [class]="'w-5 h-5 rounded border-2 flex items-center justify-center ' + 
+                             (card.checked 
+                               ? 'bg-green-500 border-green-500 dark:bg-green-600 dark:border-green-600' 
+                               : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600')">
+                  <i *ngIf="card.checked" class="fas fa-check text-white text-xs"></i>
+                </div>
+                <div class="w-0.5 h-6 rounded-full" [ngClass]="card.checked ? 'bg-green-500' : getColumnBarClass(i)"></div>
+                <div [class]="'text-sm font-semibold ' + 
+                             (card.checked 
+                               ? 'text-green-700 dark:text-green-400 line-through' 
+                               : 'text-gray-800 dark:text-white')">
+                  {{ card.title }}
+                </div>
               </div>
-              <i class="fas fa-grip-vertical text-gray-300" [ngClass]="getColumnGripClass(i)"></i>
+              <i class="fas fa-grip-vertical text-xs cursor-grabbing" 
+                 [ngClass]="card.checked ? 'text-green-400' : 'text-gray-300'"></i>
             </div>
             
             <!-- Descripción -->
-            <p class="text-xs text-gray-500 dark:text-gray-400 ml-3" *ngIf="card.desc">{{ card.desc }}</p>
+            <p [class]="'text-xs ml-6 ' + 
+                       (card.checked 
+                         ? 'text-green-600 dark:text-green-500' 
+                         : 'text-gray-500 dark:text-gray-400')" 
+               *ngIf="card.desc">{{ card.desc }}</p>
             
             <!-- Footer del preview - IGUAL a la tarjeta original -->
-            <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <div class="flex -space-x-2">
-                <div class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800"
+            <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+              <div class="flex -space-x-1.5">
+                <div class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-800"
                      [ngClass]="getColumnAvatarClass(i)"></div>
               </div>
               <div class="flex gap-2 text-xs text-gray-400">
@@ -132,19 +191,147 @@
 
           <!-- ✨ PLACEHOLDER: Muestra el espacio vacío mientras se arrastra -->
           <!-- 🚀 PERFORMANCE: Estático, sin cálculos complejos -->
-          <div *cdkDragPlaceholder class="drag-placeholder bg-blue-50 dark:bg-blue-900/20 rounded-xl border-2 border-dashed border-blue-300 dark:border-blue-600 h-24 opacity-60 flex items-center justify-center">
+          <div *cdkDragPlaceholder class="drag-placeholder bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-dashed border-blue-300 dark:border-blue-600 h-20 opacity-60 flex items-center justify-center">
             <span class="text-xs text-blue-400 dark:text-blue-500 font-medium">Suelta aquí</span>
           </div>
         </div>
         
+        <!-- Botón para agregar nueva tarea -->
+        <button (click)="openNewTaskModal(i)"
+                class="w-full mt-2 px-3 py-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-[#0075A2] dark:hover:border-[#0075A2] bg-transparent hover:bg-gray-50 dark:hover:bg-gray-700/30 text-gray-500 dark:text-gray-400 hover:text-[#0075A2] dark:hover:text-[#0075A2] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2">
+          <i class="fas fa-plus text-xs"></i>
+          <span>Agregar tarea</span>
+        </button>
+        
       </div>
       <!-- Fin del contenedor card de columna -->
       
+      <!-- Placeholder para columna completa (cuando se arrastra) -->
+      <div *cdkDragPlaceholder class="w-72 min-h-[400px] bg-gray-100 dark:bg-gray-700/30 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 opacity-50"></div>
+      
+      </div>
+      <!-- Fin del wrapper cdkDrag de columna -->
     </div>
-    <!-- Fin del loop de columnas -->
-
-  </div>
-  <!-- Fin del grid de columnas -->
+    <!-- Fin del loop de columnas (*ngFor) -->
+    </div>
+    <!-- Fin del cdkDropList de columnas -->
   
+  <!-- Botón para crear nueva lista - Al lado derecho de la última lista -->
+  <div class="flex flex-col flex-shrink-0 w-72">
+    <button 
+      (click)="openNewListModal()"
+      class="h-full min-h-[400px] px-4 bg-white/40 dark:bg-gray-800/40 hover:bg-white/60 dark:hover:bg-gray-800/60 backdrop-blur-sm rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-[#0075A2] dark:hover:border-[#0075A2] transition-all duration-200 flex flex-col items-center justify-center space-y-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium text-sm group">
+      <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 group-hover:bg-[#0075A2] transition-colors duration-200 flex items-center justify-center shadow-md">
+        <i class="fas fa-plus text-lg text-gray-600 dark:text-gray-400 group-hover:text-white transition-colors duration-200"></i>
+      </div>
+      <span class="text-base">Agregar otra lista</span>
+    </button>
+  </div>
+
+</div>
+<!-- Fin del contenedor flex principal -->
 </div>
 <!-- Fin del contenedor principal -->
+
+<!-- Modal para crear nueva lista -->
+<div *ngIf="showNewListModal" 
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+     (click)="cancelNewList()">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6"
+       (click)="$event.stopPropagation()">
+    <!-- Header del modal -->
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Nueva Lista</h3>
+      <button (click)="cancelNewList()"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Input del nombre -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        Nombre de la lista
+      </label>
+      <input 
+        type="text"
+        [(ngModel)]="newListName"
+        (keyup.enter)="addNewColumn()"
+        (keyup.escape)="cancelNewList()"
+        placeholder="Ej: Por hacer, En progreso..."
+        class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-[#0075A2] dark:focus:border-[#0075A2] focus:outline-none focus:ring-2 focus:ring-[#0075A2]/20 transition-all"
+        autofocus>
+    </div>
+    
+    <!-- Botones de acción -->
+    <div class="flex items-center justify-end space-x-3">
+      <button (click)="cancelNewList()"
+              class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        Cancelar
+      </button>
+      <button (click)="addNewColumn()"
+              [disabled]="!newListName.trim()"
+              class="px-4 py-2 rounded-lg text-sm font-bold text-white bg-[#0075A2] hover:bg-[#005f82] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg">
+        Crear Lista
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear nueva tarea -->
+<div *ngIf="showNewTaskModal" 
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+     (click)="cancelNewTask()">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6"
+       (click)="$event.stopPropagation()">
+    <!-- Header del modal -->
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Nueva Tarea</h3>
+      <button (click)="cancelNewTask()"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Input del título -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        Título <span class="text-red-500">*</span>
+      </label>
+      <input 
+        type="text"
+        [(ngModel)]="newTaskTitle"
+        (keyup.enter)="newTaskDesc ? null : addNewTask()"
+        (keyup.escape)="cancelNewTask()"
+        placeholder="¿Qué necesitas hacer?"
+        class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-[#0075A2] dark:focus:border-[#0075A2] focus:outline-none focus:ring-2 focus:ring-[#0075A2]/20 transition-all"
+        autofocus>
+    </div>
+    
+    <!-- Textarea de descripción -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        Descripción <span class="text-gray-400 text-xs">(opcional)</span>
+      </label>
+      <textarea 
+        [(ngModel)]="newTaskDesc"
+        (keyup.escape)="cancelNewTask()"
+        placeholder="Agrega más detalles sobre esta tarea..."
+        rows="3"
+        class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-[#0075A2] dark:focus:border-[#0075A2] focus:outline-none focus:ring-2 focus:ring-[#0075A2]/20 transition-all resize-none"></textarea>
+    </div>
+    
+    <!-- Botones de acción -->
+    <div class="flex items-center justify-end space-x-3">
+      <button (click)="cancelNewTask()"
+              class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        Cancelar
+      </button>
+      <button (click)="addNewTask()"
+              [disabled]="!newTaskTitle.trim()"
+              class="px-4 py-2 rounded-lg text-sm font-bold text-white bg-[#0075A2] hover:bg-[#005f82] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg">
+        Crear Tarea
+      </button>
+    </div>
+  </div>
+</div>

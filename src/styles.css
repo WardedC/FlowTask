@@ -3,6 +3,27 @@
 @import "flowbite/src/themes/default";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
+/* ====================================
+   📐 ESCALA GLOBAL (TRELLO-STYLE)
+   ==================================== */
+
+/* Reducir escala base para mostrar más contenido en pantalla */
+html {
+  font-size: 15.5px; /* Base más pequeña (default es 16px) */
+}
+
+/* Asegurar que el body use la escala correcta */
+body {
+  font-size: 1rem; /* 14px con la nueva escala */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ====================================
+   🎨 FLOWTASK - PALETA DE COLORES
+   ==================================== */
+
 /* FlowTask - Paleta de Colores Mejorada */
 :root {
   /* Colores principales */
