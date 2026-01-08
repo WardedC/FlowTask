@@ -1,6 +1,7 @@
 ﻿import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { animate, createTimeline, stagger } from 'animejs';
 
 @Component({
@@ -22,11 +23,11 @@ export class LogginComponent implements AfterViewInit {
   @ViewChild('splash', { static: false }) splashRef!: ElementRef<HTMLElement>;
   @ViewChild('card', { static: false }) cardRef!: ElementRef<HTMLElement>;
 
-  constructor(private fb: FormBuilder, private host: ElementRef<HTMLElement>) {
+  constructor(private fb: FormBuilder, private host: ElementRef<HTMLElement>, private router: Router) {
     this.form = this.fb.nonNullable.group({
-      email: this.fb.nonNullable.control('', { validators: [Validators.required, Validators.email] }),
-      password: this.fb.nonNullable.control('', { validators: [Validators.required, Validators.minLength(6)] }),
-      remember: this.fb.nonNullable.control(false)
+      email: this.fb.nonNullable.control('admin@flowtask.com', { validators: [Validators.required, Validators.email] }),
+      password: this.fb.nonNullable.control('123456', { validators: [Validators.required, Validators.minLength(6)] }),
+      remember: this.fb.nonNullable.control(true)
     });
   }
 
@@ -192,8 +193,10 @@ export class LogginComponent implements AfterViewInit {
     if (btn) {
       animate(btn, { scale: [1, 0.98, 1], duration: 350, ease: 'inOutQuad' });
     }
-    // Replace with real auth logic
-    // console.log('auth', this.form.value);
+    // Redirigir a home después de la animación
+    setTimeout(() => {
+      this.router.navigate(['/home']);
+    }, 400);
   }
 
   toggleRegister(ev?: Event): void {

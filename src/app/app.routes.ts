@@ -6,7 +6,7 @@ import { WorkspaceComponent } from './pages/workspace/workspace.component';
 import { BoardComponent } from './pages/board/board.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'home', component: HomeComponent, 
       children: [ 
         { path: '', component: WorkspaceListComponent },
@@ -15,5 +15,5 @@ export const routes: Routes = [
       ]
     },
     { path: 'login', component: LogginComponent },
-    { path: '**', redirectTo: '/home' } // Wildcard route para páginas no encontradas
+    { path: '**', redirectTo: '/login' } // Wildcard route para páginas no encontradas
 ];
