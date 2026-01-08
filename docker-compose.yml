@@ -3,7 +3,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: flowtask:latest
     container_name: flowtask-app
     ports:
       - "8081:80"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
