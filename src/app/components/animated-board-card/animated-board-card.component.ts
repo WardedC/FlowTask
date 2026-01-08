@@ -21,66 +21,67 @@ export interface BoardCardData {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <!-- Board Card with Modal Preview Design -->
-    <div #cardElement class="animate-element group bg-gray-700 rounded-lg shadow-2xl overflow-hidden border border-gray-600 transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl mb-5"
+    <!-- Board Card with simplified design matching activity cards - UPDATED -->
+    <div #cardElement class="animate-element group bg-gray-50 dark:bg-gray-700 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] mb-4"
          (mouseenter)="onCardHoverEnter($event)" (mouseleave)="onCardHoverLeave($event)"
          style="opacity: 0; transform: translateY(20px) scale(0.96);">
       
-      <!-- Board Header -->
-      <div class="px-4 py-3 bg-gray-800 border-b border-gray-600 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div #iconContainer class="w-8 h-8 rounded-md flex items-center justify-center shadow-lg icon-container"
-               [style]="getIconContainerStyle()">
-            <i [class]="'fas ' + data.icon + ' text-white text-sm'"></i>
+      <!-- Board Content -->
+      <div class="p-4">
+        <!-- Header Section -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div #iconContainer class="w-10 h-10 rounded-lg flex items-center justify-center shadow-md icon-container"
+                 [style]="getIconContainerStyle()">
+              <i [class]="'fas ' + data.icon + ' text-white text-sm'"></i>
+            </div>
+            <div>
+              <h3 #titleElement class="text-gray-900 dark:text-white font-bold text-base">
+                {{ data.title }}
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300 text-xs mt-0.5">{{ data.description }}</p>
+            </div>
           </div>
-          <div>
-            <h3 #titleElement class="text-white font-bold text-base truncate max-w-40">
-              {{ data.title }}
-            </h3>
-            <p class="text-gray-300 text-xs">{{ data.description }}</p>
-          </div>
+          <button #buttonElement class="text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 hover:opacity-90 hover:scale-105 shadow-md"
+                  [style]="getButtonStyle()"
+                  (click)="navigateToBoard()">
+            Ver <i class="fas fa-arrow-right ml-1"></i>
+          </button>
         </div>
-        <button #buttonElement class="text-white px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 hover:opacity-90 hover:scale-105"
-                [style]="getButtonStyle()"
-                (click)="navigateToBoard()">
-          Ver Board <i class="fas fa-external-link-alt ml-1"></i>
-        </button>
-      </div>
-      
-      <!-- Progress Section -->
-      <div class="p-4 bg-gray-750">
-        <div class="mb-3">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-gray-300 text-sm font-medium">Progreso</span>
+        
+        <!-- Progress Section -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-700 dark:text-gray-300 text-sm font-medium">Progreso</span>
             <span #progressTextContainer class="text-sm font-bold"
                   [style]="getProgressTextStyle()">
               <span #progressText>0</span>%
             </span>
           </div>
-          <div class="w-full h-2 bg-gray-600 rounded-full overflow-hidden">
+          <div class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
             <div #progressBar class="h-full rounded-full transition-all duration-800"
                  [style]="getProgressBarStyle()"
                  style="width: 0%;"></div>
           </div>
-        </div>
-        
-        <!-- Stats -->
-        <div class="flex items-center gap-4 text-sm">
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span class="text-green-400 font-medium">
-              <span #completedNumber>0</span> Completadas
+          
+          <!-- Stats -->
+          <div class="flex items-center gap-4 text-sm pt-2">
+            <div class="flex items-center gap-2">
+              <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+              <span class="text-green-600 dark:text-green-400 font-medium text-xs">
+                <span #completedNumber>0</span> Completadas
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-2.5 h-2.5 bg-orange-500 rounded-full"></div>
+              <span class="text-orange-600 dark:text-orange-400 font-medium text-xs">
+                <span #pendingNumber>0</span> Pendientes
+              </span>
+            </div>
+            <span class="text-gray-600 dark:text-gray-400 ml-auto text-xs">
+              Total: <span #totalNumber>0</span>
             </span>
           </div>
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span class="text-orange-400 font-medium">
-              <span #pendingNumber>0</span> Pendientes
-            </span>
-          </div>
-          <span class="text-gray-400 ml-auto">
-            Total: <span #totalNumber>0</span>
-          </span>
         </div>
       </div>
     </div>
