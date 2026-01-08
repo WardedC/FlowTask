@@ -69,6 +69,9 @@ export class BoardComponent {
   newTaskDesc = '';
   selectedColumnIndex: number | null = null;
 
+  // Control de búsqueda/filtro
+  searchQuery = '';
+
   /**
    * Abre el modal para crear una nueva columna/lista
    */
@@ -155,6 +158,28 @@ export class BoardComponent {
     this.newTaskTitle = '';
     this.newTaskDesc = '';
     this.selectedColumnIndex = null;
+  }
+
+  /**
+   * Filtra las tarjetas de una columna según la búsqueda
+   */
+  getFilteredCards(cards: Card[]): Card[] {
+    if (!this.searchQuery.trim()) {
+      return cards;
+    }
+    
+    const query = this.searchQuery.toLowerCase().trim();
+    return cards.filter(card => 
+      card.title.toLowerCase().includes(query) ||
+      (card.desc && card.desc.toLowerCase().includes(query))
+    );
+  }
+
+  /**
+   * Limpia la búsqueda
+   */
+  clearSearch() {
+    this.searchQuery = '';
   }
 
   /**

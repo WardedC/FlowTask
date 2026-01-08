@@ -1,0 +1,26 @@
+# Dependencias
+node_modules
+
+# Archivos de build
+dist
+out-null
+tmp_show
+
+# Archivos de desarrollo
+.angular
+.git
+.gitignore
+.editorconfig
+.vscode
+
+# Tests
+coverage
+*.spec.ts
+
+# Documentación
+README.md
+*.md
+
+# Otros
+.DS_Store
+Thumbs.db

@@ -1,0 +1,9 @@
+services:
+  flowtask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flowtask-app
+    ports:
+      - "8081:80"
+    restart: unless-stopped

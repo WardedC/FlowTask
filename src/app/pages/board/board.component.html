@@ -3,9 +3,9 @@
   
   <!-- Header del Board - Estilo Workspace -->
   <header class="mb-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-4">
       <!-- Lado izquierdo: Icono + Título -->
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-3 flex-shrink-0">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg">
           <i class="fas fa-columns text-white text-lg"></i>
         </div>
@@ -15,17 +15,29 @@
         </div>
       </div>
       
-      <!-- Lado derecho: Botones de acción -->
-      <div class="flex items-center space-x-2">
-        <button class="flex items-center px-3 py-1.5 text-xs font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
-          <i class="fas fa-filter mr-1.5"></i>
+      <!-- Centro: Barra de búsqueda -->
+      <div class="flex-1 max-w-2xl mx-4">
+        <div class="relative">
+          <input 
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Buscar tareas..."
+            class="w-full pl-10 pr-10 py-2 text-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0075A2]/30 focus:border-[#0075A2] transition-all duration-200">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <button 
+            *ngIf="searchQuery"
+            (click)="clearSearch()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            <i class="fas fa-times text-sm"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Lado derecho: Botón de Filtrar -->
+      <div class="flex items-center flex-shrink-0">
+        <button class="flex items-center px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-md hover:shadow-lg">
+          <i class="fas fa-filter mr-2"></i>
           Filtrar
-        </button>
-        <button class="flex items-center px-3 py-2 text-xs font-bold text-white bg-[#0075A2] hover:bg-[#005f82] rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
-          <div class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center mr-2">
-            <i class="fas fa-plus text-xs text-white"></i>
-          </div>
-          <span>Nueva Tarea</span>
         </button>
       </div>
     </div>
@@ -87,7 +99,7 @@
         
         <!-- Tarjetas -->
         <!-- 🚀 PERFORMANCE: trackBy es CRÍTICO - sin esto, Angular re-crea todas las tarjetas -->
-        <div *ngFor="let card of col.cards; trackBy: trackByCardId"
+        <div *ngFor="let card of getFilteredCards(col.cards); trackBy: trackByCardId"
              cdkDrag
              [attr.data-drag-type]="'card'"
              (cdkDragStarted)="onDragStarted($event)"
