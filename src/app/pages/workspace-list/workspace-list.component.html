@@ -20,24 +20,24 @@
         </span>
       </div>
     </div>
-    
+
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
       <!-- View Toggle Buttons -->
       <div class="inline-flex rounded-lg bg-white dark:bg-gray-700 p-1 shadow-md" role="group">
-        <button type="button" 
-                (click)="setView('grid')" 
+        <button type="button"
+                (click)="setView('grid')"
                 [class]="viewMode === 'grid' ? 'px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#0075A2] to-[#6A4C93] rounded-md shadow-lg' : 'px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-300 hover:text-[#0075A2] hover:bg-[#0075A2]/5 rounded-md transition-all duration-200'">
           <i class="fas fa-th mr-2"></i>Grid
         </button>
-        <button type="button" 
-                (click)="setView('list')" 
+        <button type="button"
+                (click)="setView('list')"
                 [class]="viewMode === 'list' ? 'px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#0075A2] to-[#6A4C93] rounded-md shadow-lg' : 'px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-300 hover:text-[#0075A2] hover:bg-[#0075A2]/5 rounded-md transition-all duration-200'">
           <i class="fas fa-list mr-2"></i>Lista
         </button>
       </div>
-      
+
       <!-- Create Workspace Button - Mejorado como CTA positivo -->
-      <button type="button" 
+      <button type="button"
               (click)="openCreateWorkspaceModal()"
               class="flex items-center justify-center px-6 py-3 text-sm font-bold text-[#FCFFFC] bg-gradient-to-r from-[#2EC4B6] to-[#0075A2] hover:from-[#0075A2] hover:to-[#6A4C93] rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 pulse-subtle">
         <i class="fas fa-plus mr-2"></i>
@@ -63,7 +63,7 @@
               <i class="{{ ws.icon }} text-xl text-white"></i>
             </div>
             <!-- Favorite Button - Esquina superior derecha FORZADA -->
-            <button 
+            <button
               (click)="toggleFavorite(ws, $event)"
               class="absolute w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-md favorite-button z-20"
               style="top: 8px; right: 8px;"
@@ -81,14 +81,14 @@
               <span class="text-white/90 text-xs font-medium">Actualizado hace {{ ws.lastActivity }}</span>
             </div>
           </div>
-          
+
           <!-- Card Body -->
           <div class="p-5">
             <h3 class="text-gray-900 dark:text-white font-bold text-lg mb-2 group-hover:text-[var(--ft-cerulean)] transition-colors duration-200">
               {{ ws.title }}
             </h3>
             <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">{{ ws.desc }}</p>
-            
+
             <!-- Stats Row -->
             <div class="flex items-center justify-between mb-4 text-xs">
               <div class="flex items-center gap-3">
@@ -103,7 +103,7 @@
                 </span>
               </div>
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="flex gap-2">
               <button (click)="openWorkspace(ws.id)" class="flex-1 {{ getThemeClasses(ws.theme) }} hover:opacity-90 text-white font-bold py-2.5 px-4 rounded-lg transition-all duration-200 hover:shadow-lg">
@@ -123,15 +123,29 @@
       <div *ngFor="let ws of workspaces" class="group" #wsItem (mouseenter)="onListHoverEnter($event)" (mouseleave)="onListHoverLeave($event)">
         <!-- Workspace List Item -->
         <div class="list-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl {{ getThemeHoverClasses(ws.theme) }}">
-          <div class="flex items-center p-4">
+          <div class="flex flex-col sm:flex-row sm:items-center p-4 gap-4">
             <!-- Workspace Icon & Theme -->
-            <div class="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden {{ getThemeClasses(ws.theme) }} mr-4 border border-white/50 dark:border-gray-600/50 transition-all duration-300 flex items-center justify-center shadow-lg">
-              <i class="{{ ws.icon }} text-2xl text-white"></i>
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden {{ getThemeClasses(ws.theme) }} border border-white/50 dark:border-gray-600/50 transition-all duration-300 flex items-center justify-center shadow-lg">
+                <i class="{{ ws.icon }} text-xl sm:text-2xl text-white"></i>
+              </div>
+
+              <!-- Mobile: Title next to icon -->
+              <div class="sm:hidden flex-1">
+                <h3 class="text-gray-900 dark:text-white font-bold text-base group-hover:text-[var(--ft-cerulean)] transition-colors duration-200">
+                  {{ ws.title }}
+                </h3>
+                <div class="flex items-center gap-1 mt-1">
+                  <div class="w-2 h-2 bg-[#2EC4B6] rounded-full animate-pulse"></div>
+                  <span class="text-xs text-gray-600 dark:text-gray-400">{{ ws.lastActivity }}</span>
+                </div>
+              </div>
             </div>
-            
+
             <!-- Workspace Info -->
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-3 mb-1">
+              <!-- Desktop: Title -->
+              <div class="hidden sm:flex items-center gap-3 mb-1">
                 <h3 class="text-gray-900 dark:text-white font-bold text-lg group-hover:text-[var(--ft-cerulean)] transition-colors duration-200">
                   {{ ws.title }}
                 </h3>
@@ -141,27 +155,27 @@
                 </div>
               </div>
               <p class="text-gray-600 dark:text-gray-400 text-sm truncate mb-3">{{ ws.desc }}</p>
-              
+
               <!-- Tags/Stats -->
-              <div class="flex items-center gap-3 mt-2">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ getThemeClasses(ws.theme) }} text-white shadow-sm">
-                  <i class="fas fa-layer-group mr-1"></i>{{ ws.boards }} tableros
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold {{ getThemeClasses(ws.theme) }} text-white shadow-sm">
+                  <i class="fas fa-layer-group mr-1"></i>{{ ws.boards }}
                 </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#2EC4B6] text-white shadow-sm">
-                  <i class="fas fa-users mr-1"></i>{{ ws.members }} miembros
+                <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold bg-[#2EC4B6] text-white shadow-sm">
+                  <i class="fas fa-users mr-1"></i>{{ ws.members }}
                 </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#FFB400] text-gray-900 shadow-sm">
-                  <i class="fas fa-tasks mr-1"></i>{{ ws.tasks.pending }} pendientes
+                <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold bg-[#FFB400] text-gray-900 shadow-sm">
+                  <i class="fas fa-tasks mr-1"></i>{{ ws.tasks.pending }}
                 </span>
               </div>
             </div>
-            
+
             <!-- Action Buttons -->
-            <div class="flex items-center gap-2 ml-4">
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end sm:ml-4">
               <!-- Favorite Button -->
-              <button 
+              <button
                 (click)="toggleFavorite(ws, $event)"
-                class="w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md favorite-button-list bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md favorite-button-list bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                 [class.active]="ws.isFavorite"
                 [class.inactive]="!ws.isFavorite"
                 [attr.aria-label]="ws.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
@@ -170,15 +184,15 @@
                    [class.favorite-active]="ws.isFavorite"
                    [style.color]="ws.isFavorite ? '#D7263D' : '#6B7280'"></i>
               </button>
-              
+
               <!-- Options Button -->
-              <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:text-white hover:bg-gray-900 dark:hover:bg-gray-600 rounded-lg transition-all duration-200 text-sm font-bold shadow-sm" title="Opciones">
-                <i class="fas fa-ellipsis-h mr-2"></i>Opciones
+              <button class="w-10 h-10 sm:w-auto sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:text-white hover:bg-gray-900 dark:hover:bg-gray-600 rounded-lg transition-all duration-200 text-sm font-bold shadow-sm flex items-center justify-center" title="Opciones">
+                <i class="fas fa-ellipsis-h sm:mr-2"></i><span class="hidden sm:inline">Opciones</span>
               </button>
-              
+
               <!-- Open Button -->
-              <button (click)="openWorkspace(ws.id)" class="px-6 py-2 {{ getThemeClasses(ws.theme) }} hover:opacity-90 text-white font-bold rounded-lg transition-all duration-200 hover:shadow-lg text-sm">
-                <i class="fas fa-external-link-alt mr-2"></i>Abrir
+              <button (click)="openWorkspace(ws.id)" class="flex-1 sm:flex-none px-4 sm:px-6 py-2 {{ getThemeClasses(ws.theme) }} hover:opacity-90 text-white font-bold rounded-lg transition-all duration-200 hover:shadow-lg text-sm flex items-center justify-center">
+                <i class="fas fa-external-link-alt sm:mr-2"></i><span class="hidden sm:inline">Abrir</span>
               </button>
             </div>
           </div>
