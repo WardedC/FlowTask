@@ -10,20 +10,8 @@
         <p class="text-white/70 text-xs">Gestión inteligente</p>
       </div>
     </a>
-    
+
     <div class="flex items-center space-x-4 rtl:space-x-reverse">
-      <!-- Dark/Light Mode Toggle - TEMPORALMENTE DESHABILITADO -->
-      <!-- <label class="inline-flex items-center cursor-pointer">
-        <input type="checkbox" 
-               [checked]="isDarkMode" 
-               (change)="toggleDarkMode($event)" 
-               class="sr-only peer">
-        <div class="relative w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-white/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFB400]">
-          <i class="fas fa-sun absolute top-[5px] left-[5px] text-xs text-yellow-400 peer-checked:opacity-0 transition-opacity"></i>
-          <i class="fas fa-moon absolute top-[5px] right-[5px] text-xs text-white opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-        </div>
-      </label> -->
-      
       <!-- User Avatar Dropdown -->
       <button type="button" (click)="toggleMenu()" class="flex text-sm bg-white/10 backdrop-blur-sm rounded-full hover:ring-4 hover:ring-white/20 focus:ring-4 focus:ring-white/20 transition-all duration-200 p-1 border border-white/20" id="user-menu-button">
         <span class="sr-only">Abrir menú de usuario</span>
@@ -31,7 +19,7 @@
           {{ user.initial }}
         </div>
       </button>
-      
+
       <!-- Dropdown menu -->
       <div *ngIf="menuOpen" class="z-50 absolute right-4 top-16 my-4 text-base list-none bg-white/95 dark:bg-gray-800/95 backdrop-blur-md divide-y divide-gray-100 dark:divide-gray-700 rounded-xl shadow-2xl border border-white/30 dark:border-gray-700/50 min-w-[220px] glass-effect">
         <div class="px-4 py-3 bg-gradient-to-r from-[#0075A2]/10 to-[#6A4C93]/10 rounded-t-xl">

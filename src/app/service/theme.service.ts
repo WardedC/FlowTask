@@ -9,12 +9,8 @@ export class ThemeService {
   public isDarkMode$ = this.isDarkModeSubject.asObservable();
 
   constructor() {
-    // Inicializar el tema desde localStorage
-    const savedTheme = localStorage.getItem('darkMode');
-    // Si no hay tema guardado, usar modo oscuro por defecto
-    const isDark = savedTheme === null ? true : savedTheme === 'true';
-    this.isDarkModeSubject.next(isDark);
-    this.applyTheme(isDark);
+    // Iniciar siempre en modo oscuro
+    this.applyTheme(true);
   }
 
   // Obtener el estado actual del tema
@@ -31,7 +27,6 @@ export class ThemeService {
   // Establecer un tema específico
   setTheme(isDark: boolean): void {
     this.isDarkModeSubject.next(isDark);
-    localStorage.setItem('darkMode', isDark.toString());
     this.applyTheme(isDark);
   }
 
@@ -53,5 +48,5 @@ export class ThemeService {
       body.classList.add('light');
     }
   }
-  
+
 }
