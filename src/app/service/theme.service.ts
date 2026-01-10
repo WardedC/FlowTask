@@ -5,15 +5,12 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ThemeService {
-  private isDarkModeSubject = new BehaviorSubject<boolean>(false);
+  private isDarkModeSubject = new BehaviorSubject<boolean>(true);
   public isDarkMode$ = this.isDarkModeSubject.asObservable();
 
   constructor() {
-    // Inicializar el tema desde localStorage
-    const savedTheme = localStorage.getItem('darkMode');
-    const isDark = savedTheme === 'true';
-    this.isDarkModeSubject.next(isDark);
-    this.applyTheme(isDark);
+    // Iniciar siempre en modo oscuro
+    this.applyTheme(true);
   }
 
   // Obtener el estado actual del tema
@@ -30,7 +27,6 @@ export class ThemeService {
   // Establecer un tema específico
   setTheme(isDark: boolean): void {
     this.isDarkModeSubject.next(isDark);
-    localStorage.setItem('darkMode', isDark.toString());
     this.applyTheme(isDark);
   }
 
@@ -52,5 +48,5 @@ export class ThemeService {
       body.classList.add('light');
     }
   }
-  
+
 }
