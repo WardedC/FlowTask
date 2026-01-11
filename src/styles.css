@@ -1,10 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+
+/* Tailwind v4: Forzar dark mode basado en clase .dark */
+@variant dark (&:where(.dark, .dark *));
+
 @import "flowbite/src/themes/default";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
-
-/* Tailwind v4: Configurar dark mode basado en clase */
-@custom-variant dark (&:where(.dark, .dark *));
 
 /* ====================================
    📐 ESCALA GLOBAL (TRELLO-STYLE)
