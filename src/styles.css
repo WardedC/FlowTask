@@ -3,6 +3,9 @@
 @import "flowbite/src/themes/default";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
+/* Tailwind v4: Configurar dark mode basado en clase */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ====================================
    📐 ESCALA GLOBAL (TRELLO-STYLE)
    ==================================== */
@@ -32,17 +35,17 @@ body {
   --ft-crimson: #D7263D;
   --ft-lemon-chiffon: #FAF0CA;
   --ft-baby-powder: #FCFFFC;
-  
+
   /* Nuevos colores secundarios temáticos */
   --ft-violet: #6A4C93;        /* Violeta profundo - Diseño */
   --ft-amber: #FFB400;         /* Amber - Marketing */
   --ft-turquoise: #2EC4B6;     /* Turquesa - Operaciones */
-  
+
   /* Colores de estado y utilidad */
   --ft-success: #10B981;       /* Verde éxito */
   --ft-warning: #F59E0B;       /* Amarillo advertencia */
   --ft-info: #3B82F6;          /* Azul información */
-  
+
   /* Colores neutros mejorados */
   --ft-gray-50: #F9FAFB;
   --ft-gray-100: #F3F4F6;
@@ -54,12 +57,12 @@ body {
   --ft-gray-700: #374151;
   --ft-gray-800: #1F2937;
   --ft-gray-900: #111827;
-  
+
   /* Fondos con gradientes sutiles */
   --ft-bg-primary: linear-gradient(135deg, #121619 0%, #1a1e23 100%);
   --ft-bg-card: #FCFFFC;
   --ft-bg-glass: rgba(252, 255, 252, 0.1);
-  
+
   /* Sombras coloreadas */
   --ft-shadow-cerulean: 0 4px 20px rgba(0, 117, 162, 0.15);
   --ft-shadow-violet: 0 4px 20px rgba(106, 76, 147, 0.15);
@@ -75,7 +78,7 @@ body {
   --ft-text-primary: #f8fafc;
   --ft-text-secondary: #cbd5e1;
   --ft-bg-glass: rgba(30, 41, 59, 0.1);
-  
+
   /* Sombras para modo oscuro */
   --ft-shadow-cerulean: 0 4px 20px rgba(0, 117, 162, 0.25);
   --ft-shadow-violet: 0 4px 20px rgba(106, 76, 147, 0.25);
@@ -111,7 +114,7 @@ body {
    60FPS PERFORMANCE OPTIMIZATION
    ==================================== */
 
-/* 
+/*
   SOLUCIÓN DEFINITIVA: Preview que sigue el cursor perfectamente
   - Position fixed forzado con top/left en 0
   - Transform 3D para GPU acceleration
@@ -123,9 +126,9 @@ body {
    🎯 PREVIEW OPTIMIZATION - POSICIONAMIENTO PERFECTO
    ==================================== */
 
-/* 
+/*
   🚨 ESTILOS GLOBALES PARA CDK DRAG PREVIEW
-  
+
   IMPORTANTE: Estos estilos se aplican globalmente
   Si hay conflictos con estilos del componente, el componente gana
 */
@@ -136,42 +139,42 @@ body {
   /* Angular CDK necesita modificar transform dinámicamente */
   will-change: transform;
   /* NO incluir transform aquí - CDK lo maneja completamente */
-  
+
   /* ✨ Position fixed EN ORIGEN (0,0) - CDK calcula el offset */
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  
+
   /* ✨ z-index MUY alto para estar sobre todo */
   z-index: 10000 !important;
-  
+
   /* ✨ Pointer events NONE - crítico para drop detection */
   pointer-events: none !important;
-  
+
   /* ✨ Box-sizing correcto */
   box-sizing: border-box !important;
-  
+
   /* ✨ NO selección de texto */
   user-select: none !important;
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
-  
+
   /* ✨ Touch optimizations */
   touch-action: none !important;
   -webkit-tap-highlight-color: transparent !important;
-  
+
   /* ✨ Prevenir WebKit drag nativo */
   -webkit-user-drag: none !important;
-  
+
   /* ✨ Antialiasing optimizado para movimiento suave */
   -webkit-font-smoothing: subpixel-antialiased !important;
   backface-visibility: hidden !important;
   perspective: 1000px !important;
-  
+
   /* ✨ Ancho del preview - evita recálculos */
   max-width: 400px;
   width: auto;
-  
+
   /* ⚠️ NO usar backdrop-filter - mata performance */
   /* ⚠️ NO usar box-shadow pesado */
   /* ⚠️ NO usar filter o blur */
@@ -186,11 +189,11 @@ body {
 /* Asegurar que el drop list tenga contexto de posición */
 .cdk-drop-list {
   position: relative !important;
-  
+
   /* 🚀 Aceleración GPU */
   will-change: auto;
   transform: translate3d(0, 0, 0);
-  
+
   /* 🚀 Aislamiento de repaint */
   isolation: isolate;
 }
@@ -204,18 +207,18 @@ body {
   /* 🚀 Aceleración GPU */
   will-change: transform;
   transform: translate3d(0, 0, 0);
-  
+
   /* 🚀 Transición optimizada con easing natural */
   transition: transform 250ms cubic-bezier(0.2, 0, 0, 1);
-  
+
   /* 🚀 Touch optimizations */
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* 🚀 NO selección durante drag */
   user-select: none;
   -webkit-user-select: none;
-  
+
   /* 🚀 Antialiasing para suavidad */
   -webkit-font-smoothing: subpixel-antialiased;
   backface-visibility: hidden;
@@ -228,7 +231,7 @@ body {
 /* Animación de retorno si el drop falla */
 .cdk-drag-animating {
   transition: transform 300ms cubic-bezier(0.2, 0, 0, 1) !important;
-  
+
   /* 🚀 Aceleración GPU */
   will-change: transform !important;
   transform: translate3d(0, 0, 0);
@@ -249,7 +252,7 @@ body {
 body.is-dragging {
   /* 🚀 Prevenir scroll durante drag */
   overflow: hidden;
-  
+
   /* 🚀 Cursor global */
   cursor: grabbing !important;
 }
@@ -279,7 +282,7 @@ body.is-dragging {
     /* 🚀 Mejor handling táctil */
     touch-action: pan-y !important;
   }
-  
+
   .cdk-drop-list {
     /* 🚀 Suavizado táctil */
     -webkit-overflow-scrolling: touch;
