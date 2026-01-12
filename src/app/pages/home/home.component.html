@@ -12,6 +12,16 @@
     </a>
 
     <div class="relative flex items-center space-x-4 rtl:space-x-reverse">
+      <!-- Dark/Light Mode Toggle -->
+      <button type="button" (click)="toggleDarkMode()"
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 focus:ring-4 focus:ring-white/20 transition-all duration-300 border border-white/20"
+        [title]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <!-- Sun icon (shown in dark mode) -->
+        <i *ngIf="isDarkMode" class="fas fa-sun text-yellow-300 text-lg transition-transform duration-300 hover:rotate-45"></i>
+        <!-- Moon icon (shown in light mode) -->
+        <i *ngIf="!isDarkMode" class="fas fa-moon text-white text-lg transition-transform duration-300 hover:-rotate-12"></i>
+      </button>
+
       <!-- User Avatar Dropdown -->
       <button type="button" (click)="toggleMenu()" class="flex text-sm bg-white/10 backdrop-blur-sm rounded-full hover:ring-4 hover:ring-white/20 focus:ring-4 focus:ring-white/20 transition-all duration-200 p-1 border border-white/20" id="user-menu-button">
         <span class="sr-only">Abrir menú de usuario</span>

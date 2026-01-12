@@ -36,12 +36,12 @@ export interface IconCategory {
   imports: [CommonModule, FormsModule],
   template: `
     <!-- Compact Modal Container -->
-    <div #modalContainer 
-         [id]="'create-' + config.type + '-modal'" 
+    <div #modalContainer
+         [id]="'create-' + config.type + '-modal'"
          class="fixed inset-0 z-50 overflow-hidden transition-all duration-500 opacity-0 pointer-events-none"
          [class.modal-hidden]="!isModalOpen || animationPhase === 0"
          [class.modal-visible]="isModalOpen && animationPhase > 0">
-      
+
       <!-- Enhanced Backdrop -->
       <div class="modal-backdrop absolute inset-0 bg-gradient-to-br from-black/40 via-black/60 to-black/80 backdrop-blur-xl transition-all duration-500 opacity-0"
            (click)="closeModal()">
@@ -56,14 +56,14 @@ export interface IconCategory {
       </div>
 
       <!-- Modal Wrapper with Preview Layout -->
-      <div class="relative p-8 w-full max-w-8xl mx-auto h-screen flex items-center justify-center">
-        <div class="flex gap-12 w-full items-center justify-center">
-        
+      <div class="relative p-4 sm:p-6 lg:p-8 w-full max-w-8xl mx-auto min-h-screen flex items-center justify-center">
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full items-center justify-center">
+
 
 
         <!-- Main Modal Content -->
         <!-- Progress Indicator Floating Above Modal -->
-        <div class="progress-indicator-container absolute -top-6 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-500 opacity-0 scale-95 -translate-y-4">
+        <div class="progress-indicator-container absolute -top-6 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-500 opacity-0 scale-95 -translate-y-4 hidden sm:block">
           <div class="rounded-full px-4 py-1.5 bg-black/80 backdrop-blur-sm border border-black/40 shadow-xl">
             <div class="flex items-center space-x-3">
               <span class="text-white text-xs font-medium">
@@ -77,21 +77,21 @@ export interface IconCategory {
           </div>
         </div>
 
-        <div #modalContent 
-             class="modal-content-container relative w-full max-w-3xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transform transition-all duration-700 opacity-0 scale-95 translate-y-4"
+        <div #modalContent
+             class="modal-content-container relative w-full max-w-[95vw] sm:max-w-xl lg:max-w-3xl max-h-[85vh] sm:max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transform transition-all duration-700 opacity-0 scale-95 translate-y-4"
              (click)="$event.stopPropagation()"
              style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);">
-             
+
           <!-- Modal Header -->
-          <div #modalHeader class="relative p-6 bg-[#0075A2] rounded-t-2xl overflow-hidden modal-header flex-shrink-0">
+          <div #modalHeader class="relative p-4 sm:p-6 bg-[#0075A2] rounded-t-2xl overflow-hidden modal-header flex-shrink-0">
             <!-- Dynamic Background Effects -->
             <div class="absolute inset-0">
               <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
               <div class="floating-element absolute -top-5 -right-5 w-16 h-16 bg-white/10 rounded-full blur-2xl animate-pulse"></div>
             </div>
-            
 
-            
+
+
             <!-- Header Content -->
             <div class="relative flex items-center justify-between">
               <div class="flex items-center gap-4">
@@ -101,7 +101,7 @@ export interface IconCategory {
                     <i [class]="'fas ' + config.icon + ' text-white text-lg group-hover:rotate-12 transition-transform duration-300'"></i>
                   </div>
                 </div>
-                
+
                 <!-- Title Section -->
                 <div class="space-y-0">
                   <h3 class="text-xl font-bold text-white tracking-tight">
@@ -110,21 +110,21 @@ export interface IconCategory {
                   <p class="text-white/80 text-xs">{{ config.type === 'workspace' ? 'Organiza tu flujo de trabajo' : 'Gestiona tus tareas' }}</p>
                 </div>
               </div>
-              
+
               <!-- Enhanced Close Button -->
-              <button type="button" 
+              <button type="button"
                       (click)="closeModal()"
                       class="relative group p-2 rounded-lg glass-effect bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all duration-300">
                 <i class="fas fa-times text-lg transition-all duration-300 group-hover:rotate-90 text-white"></i>
               </button>
             </div>
           </div>
-          
 
-          
+
+
           <!-- Scrollable Modal Body -->
           <div class="p-6 space-y-6 bg-white dark:bg-gray-900 relative overflow-y-auto flex-1 modal-scroll">
-            
+
             <!-- Name Input -->
             <div class="group relative">
               <label [for]="config.type + '-name'" class="block mb-3 text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center">
@@ -133,19 +133,19 @@ export interface IconCategory {
                 </div>
                 Nombre del {{ config.type === 'workspace' ? 'Workspace' : 'Board' }}
               </label>
-              
+
               <div class="relative">
-                <input [id]="config.type + '-name'" 
-                       type="text" 
+                <input [id]="config.type + '-name'"
+                       type="text"
                        [(ngModel)]="itemData.name"
                        (input)="updateProgress()"
                        [placeholder]="'Ej: ' + (config.type === 'workspace' ? 'Mi Workspace' : 'Proyecto Q1')"
                        class="w-full h-12 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 dark:text-white text-gray-900 text-base rounded-lg focus:ring-2 focus:ring-[#0075A2] focus:border-[#0075A2] px-4 pr-12 transition-all duration-300 placeholder:text-gray-400">
-                
+
                 <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <i class="fas fa-{{ config.type === 'workspace' ? 'briefcase' : 'clipboard-list' }} text-sm"></i>
                 </div>
-                
+
                 <div class="absolute bottom-0 right-3 text-xs text-gray-400">
                   {{ itemData.name.length }}/50
                 </div>
@@ -160,15 +160,15 @@ export interface IconCategory {
                 </div>
                 Descripción
               </label>
-              
+
               <div class="relative">
-                <textarea [id]="config.type + '-description'" 
+                <textarea [id]="config.type + '-description'"
                           [(ngModel)]="itemData.description"
                           (input)="updateProgress()"
                           rows="3"
                           [placeholder]="'Describe brevemente el propósito...'"
                           class="w-full bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 dark:text-white text-gray-900 text-base rounded-lg focus:ring-2 focus:ring-[#4B9BE8] focus:border-[#4B9BE8] p-4 pr-12 transition-all duration-300 resize-none placeholder:text-gray-400"></textarea>
-                
+
                 <div class="absolute bottom-2 right-3 text-xs text-gray-400">
                   {{ itemData.description.length }}/200
                 </div>
@@ -183,7 +183,7 @@ export interface IconCategory {
                 </div>
                 Icono
               </label>
-              
+
               <!-- Current Icon Display & Selector Button -->
               <div class="mb-4">
                 <button type="button"
@@ -196,16 +196,16 @@ export interface IconCategory {
                         [class.bg-gray-50]="!itemData.icon"
                         [class.dark:bg-gray-700]="!itemData.icon"
                         [class.dark:border-gray-600]="!itemData.icon">
-                  
+
                   <div class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300"
                        [style.background]="itemData.icon ? getCurrentColor() : 'transparent'"
                        [class.border-2]="!itemData.icon"
                        [class.border-dashed]="!itemData.icon"
                        [class.border-gray-400]="!itemData.icon">
-                    <i [class]="itemData.icon ? 'fas ' + getSelectedIcon() + ' text-white' : 'fas fa-plus text-gray-400'" 
+                    <i [class]="itemData.icon ? 'fas ' + getSelectedIcon() + ' text-white' : 'fas fa-plus text-gray-400'"
                        class="text-xl"></i>
                   </div>
-                  
+
                   <div class="flex-1 text-left">
                     <h4 class="font-bold text-gray-800 dark:text-gray-200 text-sm">
                       {{ itemData.icon ? (itemData.icon.replace('fa-', '') | titlecase) : 'Seleccionar Icono' }}
@@ -214,28 +214,28 @@ export interface IconCategory {
                       {{ itemData.icon ? 'Haz clic para cambiar el icono' : 'Elige de más de 120 iconos disponibles' }}
                     </p>
                   </div>
-                  
+
                   <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
                      [class.rotate-180]="showIconSelector"></i>
                 </button>
               </div>
-              
+
               <!-- Icon Selector Dropdown -->
-              <div *ngIf="showIconSelector" 
+              <div *ngIf="showIconSelector"
                    class="bg-white dark:bg-gray-800 border-2 border-[#0075A2] rounded-xl shadow-xl overflow-hidden transition-all duration-300 animate-in slide-in-from-top-5">
-                
+
                 <!-- Header -->
                 <div class="px-4 py-3 bg-gradient-to-r from-[#0075A2] to-[#4B9BE8] text-white flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <i class="fas fa-icons text-lg"></i>
                     <span class="font-semibold text-sm">Seleccionar Icono</span>
                   </div>
-                  <button (click)="toggleIconSelector()" 
+                  <button (click)="toggleIconSelector()"
                           class="w-6 h-6 rounded-md bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
                     <i class="fas fa-times text-xs"></i>
                   </button>
                 </div>
-                
+
                 <!-- Category Pills -->
                 <div class="px-4 py-3 bg-gray-50 dark:bg-gray-750 border-b border-gray-200 dark:border-gray-700">
                   <div class="flex flex-wrap gap-2">
@@ -257,13 +257,13 @@ export interface IconCategory {
                     </button>
                   </div>
                 </div>
-                
+
                 <!-- Icon Grid -->
                 <div class="p-4 max-h-80 overflow-y-auto">
                   <div class="mb-3">
                     <h6 class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{{ selectedIconCategory }} - {{ getSelectedCategoryIcons().length }} iconos</h6>
                   </div>
-                  
+
                   <div class="grid grid-cols-8 gap-3">
                     <button *ngFor="let icon of getSelectedCategoryIcons()"
                             (click)="selectIcon(icon)"
@@ -278,14 +278,14 @@ export interface IconCategory {
                             [class.hover:border-[#0075A2]]="itemData.icon !== icon"
                             [class.hover:bg-blue-50]="itemData.icon !== icon"
                             [class.dark:hover:bg-gray-600]="itemData.icon !== icon">
-                      
+
                       <!-- Selection indicator -->
-                      <div *ngIf="itemData.icon === icon" 
+                      <div *ngIf="itemData.icon === icon"
                            class="absolute -top-1 -right-1 w-4 h-4 bg-[#0075A2] rounded-full flex items-center justify-center">
                         <i class="fas fa-check text-white text-xs"></i>
                       </div>
-                      
-                      <i [class]="'fas ' + icon" 
+
+                      <i [class]="'fas ' + icon"
                          [class.text-[#0075A2]]="itemData.icon === icon"
                          [class.text-gray-600]="itemData.icon !== icon"
                          [class.dark:text-gray-300]="itemData.icon !== icon"
@@ -294,7 +294,7 @@ export interface IconCategory {
                     </button>
                   </div>
                 </div>
-                
+
                 <!-- Footer with quick actions -->
                 <div class="px-4 py-3 bg-gray-50 dark:bg-gray-750 border-t border-gray-200 dark:border-gray-700">
                   <div class="flex items-center justify-between">
@@ -302,7 +302,7 @@ export interface IconCategory {
                       <span *ngIf="itemData.icon">{{ itemData.icon.replace('fa-', '') | titlecase }}</span>
                       <span *ngIf="!itemData.icon">Selecciona un icono</span>
                     </div>
-                    <button (click)="toggleIconSelector()" 
+                    <button (click)="toggleIconSelector()"
                             class="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                       Cerrar
                     </button>
@@ -339,13 +339,13 @@ export interface IconCategory {
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
                   <div class="flex items-center gap-2 flex-1">
-                    <input type="color" 
+                    <input type="color"
                            [(ngModel)]="itemData.color"
                            (input)="onColorChange($event)"
                            class="w-12 h-10 rounded-lg border-2 border-gray-200 cursor-pointer">
-                    
+
                     <div class="flex-1">
-                      <input type="text" 
+                      <input type="text"
                              [(ngModel)]="itemData.color"
                              (input)="onHexColorChange($event)"
                              placeholder="#0075A2"
@@ -353,18 +353,18 @@ export interface IconCategory {
                              class="w-full h-10 px-3 text-sm font-mono bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 dark:text-white text-gray-900 rounded-lg focus:ring-2 focus:ring-[#0075A2] focus:border-[#0075A2] transition-all duration-300 placeholder:text-gray-400">
                     </div>
                   </div>
-                  
+
                   <!-- Color Preview -->
                   <div class="w-16 h-10 rounded-lg border-2 border-gray-200 flex items-center justify-center shadow-inner"
                        [style.background]="itemData.color">
-                    <span class="text-xs font-bold" 
+                    <span class="text-xs font-bold"
                           [class.text-white]="isColorDark(itemData.color)"
                           [class.text-black]="!isColorDark(itemData.color)">
                       {{ itemData.color.toUpperCase() }}
                     </span>
                   </div>
                 </div>
-                
+
                 <!-- Color Helper Text -->
                 <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                   <i class="fas fa-info-circle text-xs"></i>
@@ -377,8 +377,8 @@ export interface IconCategory {
           </div>
 
           <!-- Modal Footer -->
-          <div class="relative p-6 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 rounded-b-2xl flex-shrink-0">
-            <div class="flex items-center justify-between gap-4">
+          <div class="relative p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 rounded-b-2xl flex-shrink-0">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
               <!-- Progress Info -->
               <div class="flex-1 progress-wrapper">
                 <div class="flex items-center justify-between mb-2">
@@ -390,21 +390,21 @@ export interface IconCategory {
                        [style.width]="getProgressPercentage() + '%'"></div>
                 </div>
               </div>
-              
+
               <!-- Action Buttons -->
-              <div class="flex items-center gap-3">
-                <button type="button" 
+              <div class="flex items-center gap-2 sm:gap-3">
+                <button type="button"
                         (click)="closeModal()"
-                        class="px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:scale-105 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300">
+                        class="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:scale-105 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300">
                   Cancelar
                 </button>
-                
-                <button type="button" 
+
+                <button type="button"
                         (click)="createItem()"
                         [disabled]="!itemData.name.trim()"
-                        class="create-button px-8 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0075A2] via-[#4B9BE8] to-[#0075A2] rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 relative overflow-hidden group flex items-center gap-2">
-                  <i class="fas fa-plus relative z-10 transition-transform duration-300 group-hover:rotate-90 text-white" 
-                     [class.fa-plus]="!isCreating" 
+                        class="create-button flex-1 sm:flex-none px-6 sm:px-8 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0075A2] via-[#4B9BE8] to-[#0075A2] rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 relative overflow-hidden group flex items-center justify-center gap-2">
+                  <i class="fas fa-plus relative z-10 transition-transform duration-300 group-hover:rotate-90 text-white"
+                     [class.fa-plus]="!isCreating"
                      [class.fa-check]="isCreating"></i>
                   <span class="relative z-10">{{ !isCreating ? 'Crear' : '¡Creado!' }}</span>
                   <div class="absolute inset-0 bg-gradient-to-r from-[#4B9BE8] via-[#0075A2] to-[#003f5c] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -416,25 +416,24 @@ export interface IconCategory {
         </div>
 
         <!-- Preview Card (Board/Workspace) -->
-        <div class="preview-card-container w-full max-w-md flex items-center justify-center transform transition-all duration-700 opacity-0 scale-95 translate-x-4">
-          
+        <div class="preview-card-container hidden lg:flex w-full max-w-md items-center justify-center transform transition-all duration-700 opacity-0 scale-95 translate-x-4">
           <div class="w-full">
-            
+
             <!-- Board Preview (when type = 'board') -->
-            <div *ngIf="config.type === 'board'" class="bg-gray-700 rounded-lg shadow-2xl overflow-hidden border border-gray-600 transition-all duration-500 hover:scale-[1.02] w-full">
-              
+            <div *ngIf="config.type === 'board'" class="bg-white dark:bg-gray-700 rounded-lg shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-600 transition-all duration-500 hover:scale-[1.02] w-full">
+
               <!-- Board Header -->
-              <div class="px-4 py-3 bg-gray-800 border-b border-gray-600 flex items-center justify-between">
+              <div class="px-4 py-3 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-md flex items-center justify-center"
                        [style.background]="getCurrentColor()">
                     <i [class]="'fas ' + getSelectedIcon() + ' text-white text-sm'"></i>
                   </div>
                   <div>
-                    <h3 class="text-white font-bold text-base truncate max-w-40">
+                    <h3 class="text-gray-800 dark:text-white font-bold text-base truncate max-w-40">
                       {{ itemData.name || 'Board Desarrollo' }}
                     </h3>
-                    <p class="text-gray-300 text-xs">{{ itemData.description || 'Sprint actual en progreso' }}</p>
+                    <p class="text-gray-600 dark:text-gray-300 text-xs">{{ itemData.description || 'Sprint actual en progreso' }}</p>
                   </div>
                 </div>
                 <button class="text-white px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 hover:opacity-90 hover:scale-105"
@@ -442,57 +441,57 @@ export interface IconCategory {
                   Ver Board <i class="fas fa-external-link-alt ml-1"></i>
                 </button>
               </div>
-              
+
               <!-- Progress Section -->
-              <div class="p-4 bg-gray-750">
+              <div class="p-4 bg-gray-50 dark:bg-gray-750">
                 <div class="mb-3">
                   <div class="flex items-center justify-between mb-2">
-                    <span class="text-gray-300 text-sm font-medium">Progreso</span>
+                    <span class="text-gray-600 dark:text-gray-300 text-sm font-medium">Progreso</span>
                     <span class="text-sm font-bold" [style.color]="getCurrentColor()">{{ getProgressPercentage() }}%</span>
                   </div>
-                  <div class="w-full h-2 bg-gray-600 rounded-full overflow-hidden">
+                  <div class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                     <div class="h-full rounded-full transition-all duration-800"
                          [style.background]="'linear-gradient(90deg, ' + getCurrentColor() + ', ' + getCurrentColor() + 'dd)'"
                          [style.width]="getProgressPercentage() + '%'"></div>
                   </div>
                 </div>
-                
+
                 <!-- Stats -->
                 <div class="flex items-center gap-4 text-sm">
                   <div class="flex items-center gap-2">
                     <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span class="text-green-400 font-medium">{{ getCompletedTasks() }} Completadas</span>
+                    <span class="text-green-600 dark:text-green-400 font-medium">{{ getCompletedTasks() }} Completadas</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
-                    <span class="text-orange-400 font-medium">{{ getPendingTasks() }} Pendientes</span>
+                    <span class="text-orange-600 dark:text-orange-400 font-medium">{{ getPendingTasks() }} Pendientes</span>
                   </div>
-                  <span class="text-gray-400 ml-auto">Total: 16</span>
+                  <span class="text-gray-500 dark:text-gray-400 ml-auto">Total: 16</span>
                 </div>
               </div>
-              
+
               <!-- Team Members -->
-              <div class="px-4 py-3 bg-gray-700 border-t border-gray-600" *ngIf="itemData.members.length > 0">
+              <div class="px-4 py-3 bg-white dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600" *ngIf="itemData.members.length > 0">
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-300 text-sm font-medium">Equipo</span>
+                  <span class="text-gray-600 dark:text-gray-300 text-sm font-medium">Equipo</span>
                   <div class="flex -space-x-1">
                     <div *ngFor="let member of itemData.members.slice(0, 4); let i = index"
-                         class="w-7 h-7 rounded-full border-2 border-gray-700 flex items-center justify-center text-white text-xs font-bold transition-transform hover:scale-110"
+                         class="w-7 h-7 rounded-full border-2 border-white dark:border-gray-700 flex items-center justify-center text-white text-xs font-bold transition-transform hover:scale-110"
                          [style.background]="getAvatarColor(member)">
                       {{ getMemberInitials(member) }}
                     </div>
                     <div *ngIf="itemData.members.length > 4"
-                         class="w-7 h-7 rounded-full border-2 border-gray-700 bg-gray-600 flex items-center justify-center text-gray-300 text-xs font-bold">
+                         class="w-7 h-7 rounded-full border-2 border-white dark:border-gray-700 bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-bold">
                       +{{ itemData.members.length - 4 }}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <!-- Workspace Preview (when type = 'workspace') -->
             <div *ngIf="config.type === 'workspace'" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-600 transition-all duration-500 hover:scale-[1.02] w-full">
-              
+
               <!-- Workspace Header Section -->
               <div class="relative px-5 py-6 text-white transition-all duration-500"
                    [style.background]="'linear-gradient(135deg, ' + getCurrentColor() + ', ' + getCurrentColor() + 'dd)'">
@@ -502,48 +501,48 @@ export interface IconCategory {
                     <i class="fas fa-heart text-white text-sm"></i>
                   </div>
                 </div>
-                
+
                 <!-- Icon -->
                 <div class="mb-4">
                   <div class="w-12 h-12 bg-white/25 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300">
                     <i [class]="'fas ' + getSelectedIcon() + ' text-white text-xl'"></i>
                   </div>
                 </div>
-                
+
                 <!-- Update Status -->
                 <div class="text-white/90 text-sm font-medium mb-1">
                   Actualizado hace unos momentos
                 </div>
               </div>
-              
+
               <!-- Content Section -->
-              <div class="bg-gray-800 text-white px-5 py-6">
+              <div class="bg-gray-100 dark:bg-gray-800 px-5 py-6">
                 <!-- Title -->
-                <h3 class="text-white font-bold text-xl mb-2 transition-all duration-300">
+                <h3 class="text-gray-800 dark:text-white font-bold text-xl mb-2 transition-all duration-300">
                   {{ itemData.name || 'Mi Workspace' }}
                 </h3>
-                
+
                 <!-- Description -->
-                <p class="text-gray-300 text-sm mb-6 leading-relaxed transition-all duration-300">
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-6 leading-relaxed transition-all duration-300">
                   {{ itemData.description || 'Describe brevemente el propósito de este workspace...' }}
                 </p>
-                
+
                 <!-- Stats Row -->
                 <div class="flex items-center gap-6 mb-6">
                   <div class="flex items-center gap-2">
-                    <i class="fas fa-clipboard-list text-gray-400 text-sm"></i>
-                    <span class="text-white font-medium">{{ getActiveBoardsCount() }}</span>
+                    <i class="fas fa-clipboard-list text-gray-500 dark:text-gray-400 text-sm"></i>
+                    <span class="text-gray-800 dark:text-white font-medium">{{ getActiveBoardsCount() }}</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <i class="fas fa-users text-gray-400 text-sm"></i>
-                    <span class="text-white font-medium">{{ getMembersCount() }}</span>
+                    <i class="fas fa-users text-gray-500 dark:text-gray-400 text-sm"></i>
+                    <span class="text-gray-800 dark:text-white font-medium">{{ getMembersCount() }}</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <i class="fas fa-tasks text-gray-400 text-sm"></i>
-                    <span class="text-white font-medium">{{ getCompletedTasks() }}</span>
+                    <i class="fas fa-tasks text-gray-500 dark:text-gray-400 text-sm"></i>
+                    <span class="text-gray-800 dark:text-white font-medium">{{ getCompletedTasks() }}</span>
                   </div>
                 </div>
-                
+
                 <!-- Action Button -->
                 <div class="flex items-center gap-3">
                   <button class="flex-1 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
@@ -552,14 +551,14 @@ export interface IconCategory {
                     <i class="fas fa-external-link-alt text-sm"></i>
                     Abrir
                   </button>
-                  
+
                   <!-- More Options -->
-                  <button class="w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors duration-200">
-                    <i class="fas fa-ellipsis-h text-gray-300"></i>
+                  <button class="w-12 h-12 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors duration-200">
+                    <i class="fas fa-ellipsis-h text-gray-600 dark:text-gray-300"></i>
                   </button>
                 </div>
               </div>
-              
+
               <!-- Workspace Footer -->
               <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between">
@@ -574,15 +573,15 @@ export interface IconCategory {
                 </div>
               </div>
             </div>
-            
+
             <!-- Dynamic Tip -->
             <div class="mt-4 p-3 rounded-lg backdrop-blur-sm"
-                 [ngClass]="config.type === 'board' ? 'bg-blue-900/20 border border-blue-700/50' : 'bg-purple-900/20 border border-purple-700/50'">
+                 [ngClass]="config.type === 'board' ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700/50' : 'bg-purple-100 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-700/50'">
               <div class="flex items-center gap-2">
-                <i class="fas fa-info-circle text-sm" 
-                   [ngClass]="config.type === 'board' ? 'text-blue-400' : 'text-purple-400'"></i>
+                <i class="fas fa-info-circle text-sm"
+                   [ngClass]="config.type === 'board' ? 'text-blue-500 dark:text-blue-400' : 'text-purple-500 dark:text-purple-400'"></i>
                 <p class="text-xs"
-                   [ngClass]="config.type === 'board' ? 'text-blue-300' : 'text-purple-300'">
+                   [ngClass]="config.type === 'board' ? 'text-blue-600 dark:text-blue-300' : 'text-purple-600 dark:text-purple-300'">
                   Vista previa del {{ config.type === 'board' ? 'board' : 'workspace' }} que estás creando
                 </p>
               </div>
@@ -626,7 +625,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   isCreating = false;
   currentStep = 0;
   totalSteps = 4;
-  
+
   // Enhanced animation control
   isEntering = false;
   isExiting = false;
@@ -636,7 +635,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   // Icon selector properties
   showIconSelector = false;
   selectedIconCategory = 'general';
-  
+
   iconCategories: IconCategory[] = [
     {
       category: 'general',
@@ -686,7 +685,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   ngOnInit(): void {
     // Initialize modal state
     this.initializeModalState();
-    
+
     // Initialize default themes if not provided
     if (!this.availableThemes || this.availableThemes.length === 0) {
       this.availableThemes = [
@@ -716,7 +715,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.updateProgress();
-      
+
       // If modal is already open when view initializes, start animation
       if (this.isModalOpen && this.animationPhase === 0) {
         this.startEntranceAnimation();
@@ -732,13 +731,13 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isModalOpen']) {
-      console.log('🔄 Modal state change:', { 
-        isOpen: this.isModalOpen, 
+      console.log('🔄 Modal state change:', {
+        isOpen: this.isModalOpen,
         previous: changes['isModalOpen'].previousValue,
         animationPhase: this.animationPhase,
-        isAnimating: this.isAnimating 
+        isAnimating: this.isAnimating
       });
-      
+
       if (this.isModalOpen) {
         // Reset animation state before starting entrance
         this.animationPhase = 0;
@@ -769,15 +768,15 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
       console.log('⚠️ Entrance animation already in progress, skipping');
       return;
     }
-    
+
     console.log('🚀 Starting entrance animation');
-    
+
     this.isAnimating = true;
     this.isEntering = true;
     this.isExiting = false;
     this.animationPhase = 1;
     this.showContent = true;
-    
+
     // Use double requestAnimationFrame for smoother transition
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -800,14 +799,14 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
       console.log('⚠️ Exit animation already in progress, skipping');
       return;
     }
-    
+
     console.log('🚪 Starting exit animation');
-    
+
     this.isAnimating = true;
     this.isExiting = true;
     this.isEntering = false;
     this.animationPhase = 0; // This will trigger .modal-hidden class
-    
+
     this.cdr.detectChanges();
 
     // Complete exit animation and fully reset state
@@ -860,7 +859,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     const hexValue = event.target.value;
     // Validate hex color format
     const hexPattern = /^#[0-9A-Fa-f]{6}$/;
-    
+
     if (hexPattern.test(hexValue)) {
       this.itemData.color = hexValue;
       this.updateProgress();
@@ -883,16 +882,16 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     if (!color || !color.startsWith('#')) {
       return false;
     }
-    
+
     // Convert hex to RGB
     const hex = color.substring(1);
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
-    
+
     // Calculate luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
+
     // Return true if color is dark (luminance < 0.5)
     return luminance < 0.5;
   }
@@ -975,9 +974,9 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     if (this.itemData.name.trim()) progress++;
     if (this.itemData.description.trim()) progress++;
     if (this.itemData.theme) progress++;
-    
+
     const newStep = Math.min(progress, this.totalSteps - 1);
-    
+
     // Animate step change smoothly
     if (newStep !== this.currentStep) {
       // Add bounce animation to progress numbers
@@ -988,7 +987,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
           el.classList.remove('updating');
         }, 500);
       });
-      
+
       setTimeout(() => {
         this.currentStep = newStep;
         this.cdr.detectChanges();
@@ -1011,26 +1010,26 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
   createItem(): void {
     if (this.itemData.name.trim()) {
       this.isCreating = true;
-      
+
       // Add loading animation to button
       const createButton = this.el.nativeElement.querySelector('.create-button');
       if (createButton) {
         createButton.classList.add('loading');
-        
+
         // Add success animation after a delay
         setTimeout(() => {
           createButton.classList.remove('loading');
           createButton.classList.add('success');
         }, 800);
       }
-      
+
       // Add success animation to progress bar
       const progressBars = this.el.nativeElement.querySelectorAll('.progress-bar');
       progressBars.forEach((bar: HTMLElement) => {
         bar.style.background = 'linear-gradient(90deg, #10B981, #34D399, #6EE7B7)';
         bar.style.boxShadow = '0 4px 15px rgba(16, 185, 129, 0.4)';
       });
-      
+
       // Animate form elements out
       const formGroups = this.el.nativeElement.querySelectorAll('.group');
       formGroups.forEach((group: HTMLElement, index: number) => {
@@ -1039,24 +1038,24 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
           group.style.transform = 'translateY(-10px) scale(0.98)';
         }, index * 50);
       });
-      
+
       // Simple timeout to simulate the creation process
       setTimeout(() => {
         // Debug: Log data being sent
         console.log('Enviando datos del modal:', { ...this.itemData });
         this.itemCreated.emit({ ...this.itemData });
-        
+
         // Reset animations before closing
         if (createButton) {
           createButton.classList.remove('success');
         }
-        
+
         this.resetForm();
         this.isCreating = false;
-        
+
         // Start exit animation
         this.startExitAnimation();
-        
+
         // Close modal after animation
         setTimeout(() => {
           this.modalClosed.emit();
@@ -1114,7 +1113,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
       members: [],
       newMemberEmail: ''
     };
-    
+
     // Reset animation state
     this.currentStep = 0;
     this.animationPhase = 0;
@@ -1123,10 +1122,10 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     this.isEntering = false;
     this.isExiting = false;
     this.isCreating = false;
-    
+
     // Reset all animation classes
     this.clearAnimationClasses();
-    
+
     // Trigger change detection to update progress display
     setTimeout(() => {
       this.cdr.detectChanges();
@@ -1137,7 +1136,7 @@ export class CreateModalComponent implements OnInit, OnDestroy, OnChanges, After
     // Remove animation classes from all elements
     const animationClasses = [
       'modal-entering', 'modal-exiting',
-      'content-entering', 'content-exiting', 
+      'content-entering', 'content-exiting',
       'header-entering', 'form-entering',
       'preview-entering', 'progress-entering'
     ];

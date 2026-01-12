@@ -89,10 +89,21 @@ body {
 
 /* Light mode explicit (default) */
 :root:not(.dark) {
-  --ft-bg-primary: #fdfcf8;
+  --ft-bg-primary: #f5f0e6;
   --ft-bg-card: #ffffff;
   --ft-text-primary: #1f2937;
   --ft-text-secondary: #6b7280;
+}
+
+/* Aplicar fondo crema al body en modo claro */
+body.light,
+html.light {
+  background-color: #f5f0e6;
+}
+
+body.dark,
+html.dark {
+  background-color: #0f172a;
 }
 
 /* Utilidades globales */

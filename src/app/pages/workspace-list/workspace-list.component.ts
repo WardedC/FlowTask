@@ -1,9 +1,11 @@
-import { Component, ChangeDetectorRef, ElementRef, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, ChangeDetectorRef, ElementRef, AfterViewInit, ViewChildren, QueryList, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, createTimeline, stagger } from 'animejs';
 import { CreateModalComponent, ModalConfig, CreateItemData } from '../../components/create-modal/create-modal.component';
+import { ThemeService } from '../../service/theme.service';
+import { Subscription } from 'rxjs';
 
 interface Workspace {
   id: string;
@@ -31,13 +33,14 @@ interface Workspace {
   templateUrl: './workspace-list.component.html',
   styleUrl: './workspace-list.component.css'
 })
-export class WorkspaceListComponent implements AfterViewInit {
-viewMode: 'grid' | 'list' = 'grid';
+export class WorkspaceListComponent implements AfterViewInit, OnDestroy {
+  viewMode: 'grid' | 'list' = 'grid';
   user = { name: 'Edward', initial: 'E' };
   menuOpen = false;
   isLoading = false; // Para mostrar loading states
-  isDarkMode = false; // Para el modo dark/light
-  
+  isDarkMode = true; // Para el modo dark/light (default oscuro)
+  private themeSubscription?: Subscription;
+
   // Modal properties
   isModalOpen = false;
   newWorkspace = {
@@ -56,7 +59,7 @@ viewMode: 'grid' | 'list' = 'grid';
     icon: 'fa-layer-group',
     type: 'workspace'
   };
-  
+
   // Available themes for workspace creation
   availableThemes = [
     { id: 'cerulean', name: 'Desarrollo', color: '#0075A2', icon: 'fas fa-code' },
@@ -284,13 +287,25 @@ viewMode: 'grid' | 'list' = 'grid';
     '¡Perfecto! Hora de hacer cosas increíbles',
     '¡Excelente! Tus proyectos te están esperando'
   ];
-  
+
   currentMessage = this.welcomeMessages[Math.floor(Math.random() * this.welcomeMessages.length)];
 
-  constructor(private host: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef, private router: Router, private route: ActivatedRoute) {
-    // Inicializar el modo dark desde localStorage o usar light por defecto
-    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
-    this.applyTheme();
+  constructor(
+    private host: ElementRef<HTMLElement>,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private route: ActivatedRoute,
+    private themeService: ThemeService
+  ) {
+    // Suscribirse al estado del tema desde el servicio centralizado
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+      this.cdr.markForCheck();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.themeSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -348,7 +363,7 @@ viewMode: 'grid' | 'list' = 'grid';
   getThemeVividClasses(theme: string): string {
     const themeMap: { [key: string]: string } = {
       'cerulean': 'bg-[#0EA5E9]',     // Más brillante - sky-500
-      'violet': 'bg-[#8B5CF6]',       // Más brillante - violet-500  
+      'violet': 'bg-[#8B5CF6]',       // Más brillante - violet-500
       'amber': 'bg-[#F59E0B]',        // Más brillante - amber-500
       'turquoise': 'bg-[#06D6A0]',    // Más brillante - custom turquoise
       'crimson': 'bg-[#EF4444]'       // Más brillante - red-500
@@ -378,17 +393,17 @@ viewMode: 'grid' | 'list' = 'grid';
   // Método para toggle de favoritos con animación
   toggleFavorite(workspace: any, event: Event): void {
     event.stopPropagation(); // Evitar que se abra el workspace
-    
+
     // Cambiar el estado
     workspace.isFavorite = !workspace.isFavorite;
-    
+
     // Obtener el botón para animar
     const button = event.target as HTMLElement;
     const heartIcon = button.querySelector('i') || button;
-    
+
     // Aplicar animación de "pop"
     heartIcon.classList.add('favorite-animation');
-    
+
     // Remover la clase después de la animación
     setTimeout(() => {
       heartIcon.classList.remove('favorite-animation');
@@ -401,7 +416,7 @@ viewMode: 'grid' | 'list' = 'grid';
     this.resetForm();
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
-    
+
     // Reset scroll position of modal to top
     setTimeout(() => {
       const modalElement = document.querySelector('#create-workspace-modal');
@@ -446,7 +461,7 @@ viewMode: 'grid' | 'list' = 'grid';
 
     // Add to workspaces array
     this.workspaces.push(newWorkspace);
-    
+
     // Close modal
     this.closeCreateWorkspaceModal();
 
@@ -519,7 +534,7 @@ viewMode: 'grid' | 'list' = 'grid';
   }
 
   isFormValid(): boolean {
-    return this.newWorkspace.name.trim().length >= 3 && 
+    return this.newWorkspace.name.trim().length >= 3 &&
            this.newWorkspace.description.trim().length >= 10;
   }
 
@@ -528,7 +543,7 @@ viewMode: 'grid' | 'list' = 'grid';
 
     // Generate unique ID
     const newId = 'ws-' + Date.now();
-    
+
     // Create new workspace object with custom values
     const workspace = {
       id: newId,
@@ -551,10 +566,10 @@ viewMode: 'grid' | 'list' = 'grid';
 
     // Add to workspaces array with animation
     this.workspaces.unshift(workspace);
-    
+
     // Close modal
     this.closeCreateWorkspaceModal();
-    
+
     // Show success notification (you can implement this)
     this.showSuccessNotification('¡Workspace creado exitosamente!');
   }
@@ -636,43 +651,10 @@ viewMode: 'grid' | 'list' = 'grid';
   toggleDarkMode(event?: Event): void {
     if (event) {
       const target = event.target as HTMLInputElement;
-      this.isDarkMode = target.checked;
+      this.themeService.setTheme(target.checked);
     } else {
-      this.isDarkMode = !this.isDarkMode;
+      this.themeService.toggleTheme();
     }
-    
-    localStorage.setItem('darkMode', this.isDarkMode.toString());
-    console.log('Dark mode toggled:', this.isDarkMode);
-    this.applyTheme();
-    // Force change detection
-    this.cdr.detectChanges();
-  }
-
-  private applyTheme(): void {
-    const html = document.documentElement;
-    const body = document.body;
-    
-    // Remove any existing classes first
-    html.classList.remove('dark', 'light');
-    body.classList.remove('dark', 'light');
-    
-    if (this.isDarkMode) {
-      html.classList.add('dark');
-      body.classList.add('dark');
-      console.log('Dark mode applied');
-    } else {
-      html.classList.add('light');
-      body.classList.add('light');
-      console.log('Light mode applied');
-    }
-    
-    // Force change detection after DOM update
-    setTimeout(() => {
-      console.log('HTML classes:', html.className);
-      console.log('Body classes:', body.className);
-      console.log('isDarkMode state:', this.isDarkMode);
-      this.cdr.detectChanges();
-    }, 100);
   }
 
   // Método para navegar al workspace específico

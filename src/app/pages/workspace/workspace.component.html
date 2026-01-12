@@ -1,43 +1,47 @@
 <div class="min-h-screen p-6">
   <div class="max-w-7xl mx-auto">
-    
-    <!-- Header del Workspace -->
-    <div class="mb-8 flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg">
-          <i class="fas fa-briefcase text-white text-xl"></i>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ workspaceName }}</h1>
-          <p class="text-gray-600 dark:text-gray-400">Workspace ID: {{ workspaceId || 'Sin ID' }}</p>
-        </div>
-      </div>
-      
-      <!-- Botones de acción -->
-      <div class="flex items-center space-x-3">
-        <button 
-          (click)="goBack()"
-          class="flex items-center px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
-          <i class="fas fa-arrow-left mr-2"></i>
-          Volver
-        </button>
-        <button class="px-4 py-2 text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-white/40 dark:border-gray-600/50 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
-          <i class="fas fa-cog mr-2"></i>
-          Configurar
-        </button>
-      </div>
-    </div>
 
-    <!-- Contenido del Workspace -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
+    <!-- Carta principal que envuelve todo el workspace -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+
+      <!-- Header del Workspace dentro de la carta -->
+      <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-[#0075A2] to-[#6A4C93] flex items-center justify-center shadow-lg flex-shrink-0">
+            <i class="fas fa-briefcase text-white text-base sm:text-xl"></i>
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-gray-100 truncate">{{ workspaceName }}</h1>
+            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">Workspace ID: {{ workspaceId || 'Sin ID' }}</p>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+          <button
+            (click)="goBack()"
+            class="flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
+            <i class="fas fa-arrow-left mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Volver</span>
+          </button>
+          <button class="flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-[#0075A2] dark:text-blue-400 bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
+            <i class="fas fa-cog mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Configurar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenido del Workspace -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
       <!-- Panel principal -->
       <div class="lg:col-span-2 space-y-6">
-        
+
         <!-- Estadísticas del workspace -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Tarjetas de estadísticas con animaciones geométricas -->
-          <app-animated-stats-card 
+          <app-animated-stats-card
             *ngFor="let cardData of statsCardsData; let i = index; trackBy: trackByCardTitle"
             [data]="cardData"
             [animationDelay]="i * 80">
@@ -56,7 +60,7 @@
                 <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Boards del Proyecto</h2>
               </div>
               <div class="flex items-center space-x-2">
-                <button 
+                <button
                   #addBoardBtn
                   (click)="onAddNewBoard()"
                   (mouseenter)="onAddBoardHover($event)"
@@ -70,17 +74,17 @@
               </div>
             </div>
           </div>
-          
+
           <div class="p-6">
             <div class="space-y-5">
-              
+
               <!-- Tarjetas de board animadas -->
-              <app-animated-board-card 
+              <app-animated-board-card
                 *ngFor="let boardData of boardCardsData; let i = index; trackBy: trackByBoardTitle"
                 [data]="boardData"
                 [animationDelay]="i * 100">
               </app-animated-board-card>
-              
+
             </div>
           </div>
         </div>
@@ -88,7 +92,7 @@
 
       <!-- Panel lateral hermoso -->
       <div class="space-y-6">
-        
+
         <!-- Actividad reciente con mucho amor -->
         <div #contentCard class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-all duration-300 overflow-hidden">
           <!-- Header estilo workspace-list -->
@@ -100,7 +104,7 @@
               <h3 class="text-md font-bold text-gray-800 dark:text-gray-100">Actividad Reciente</h3>
             </div>
           </div>
-          
+
           <div class="p-6">
             <div class="space-y-4">
               <!-- Actividad 1 -->
@@ -114,7 +118,7 @@
                   <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Hace 2 horas • "Revisar propuesta"</p>
                 </div>
               </div>
-              
+
               <!-- Actividad 2 -->
               <div #activityItem class="animate-element flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200"
                    (mouseenter)="onActivityHoverEnter($event)" (mouseleave)="onActivityHoverLeave($event)">
@@ -153,7 +157,7 @@
               <h3 class="text-md font-bold text-gray-800 dark:text-gray-100">Nuestro Equipo</h3>
             </div>
           </div>
-          
+
           <div class="p-6">
             <div class="space-y-4">
               <!-- Miembro 1 -->
@@ -167,7 +171,7 @@
                   <p class="text-xs text-gray-500 dark:text-gray-400">Desarrollador Full Stack • Online</p>
                 </div>
               </div>
-              
+
               <!-- Miembro 2 -->
               <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
@@ -179,7 +183,7 @@
                   <p class="text-xs text-gray-500 dark:text-gray-400">UI/UX Designer • Ocupada</p>
                 </div>
               </div>
-              
+
               <!-- Miembro 3 -->
               <div #teamMember class="animate-element flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-md transition-all duration-200 group"
                    (mouseenter)="onTeamHoverEnter($event)" (mouseleave)="onTeamHoverLeave($event)">
@@ -196,6 +200,8 @@
         </div>
       </div>
     </div>
+    </div>
+    <!-- Fin de la carta principal -->
   </div>
 </div>
 

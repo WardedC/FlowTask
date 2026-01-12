@@ -30,39 +30,39 @@ export interface StatsCardData {
            [ngClass]="'bg-gradient-to-br from-[' + data.gradient.from + '] to-[' + data.gradient.to + '] dark:from-[' + data.gradient.fromDark + '] dark:to-[' + data.gradient.toDark + ']'">
         <!-- Overlay de gradiente -->
         <div class="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent stats-header-overlay"></div>
-        
+
         <!-- Contenedor de animación de figuras geométricas -->
-        <div #animationContainer class="absolute inset-0 pointer-events-none overflow-hidden" 
+        <div #animationContainer class="absolute inset-0 pointer-events-none overflow-hidden"
              style="z-index: 1;">
         </div>
-        
+
         <!-- Icono de la carta -->
         <div class="absolute top-3 left-4 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center card-icon"
              style="z-index: 3;">
           <i [class]="'fas ' + data.icon + ' text-sm text-white'"></i>
         </div>
-        
+
         <!-- Título -->
         <div class="absolute bottom-3 right-4" style="z-index: 3;">
           <p class="text-white/90 text-lg font-medium">{{ data.title }}</p>
         </div>
       </div>
-      
+
       <!-- Sección inferior con métricas -->
       <div class="p-4 relative overflow-hidden">
         <!-- Partículas flotantes en el fondo del body -->
         <div #bodyParticles class="absolute inset-0 pointer-events-none" style="z-index: 1;">
         </div>
-        
+
         <!-- Contenido principal -->
         <div class="relative" style="z-index: 2;">
           <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{{ data.description }}</p>
-          
+
           <!-- Valor principal con círculo y icono de tendencia -->
           <div class="flex items-center justify-between mb-2">
             <!-- Lado izquierdo: círculo + número -->
             <div class="flex items-center space-x-3">
-              <div class="w-3 h-3 rounded-full animate-pulse" 
+              <div class="w-3 h-3 rounded-full animate-pulse"
                    [ngClass]="{
                      'bg-[#0075A2]': data.title === 'Total',
                      'bg-green-500': data.title === 'Completadas',
@@ -76,7 +76,7 @@ export interface StatsCardData {
                 {{ data.value }}
               </p>
             </div>
-            
+
             <!-- Lado derecho: icono de tendencia -->
             <div class="flex items-center">
               <i class="fas text-lg"
@@ -87,7 +87,7 @@ export interface StatsCardData {
                  }"></i>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>
@@ -156,7 +156,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   @ViewChild('cardElement', { static: false }) cardElement!: ElementRef<HTMLElement>;
   @ViewChild('bodyParticles', { static: false }) bodyParticles!: ElementRef<HTMLElement>;
   @ViewChild('valueNumber', { static: false }) valueNumber!: ElementRef<HTMLElement>;
-  
+
   private animationInstances: any[] = [];
   private shapes: HTMLElement[] = [];
   private isDestroyed = false;
@@ -170,14 +170,14 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
 
   getNumberColor(): string {
     const isDark = document.documentElement.classList.contains('dark');
-    
+
     switch (this.data.title) {
       case 'Total':
         return isDark ? '#ffffff' : '#1f2937'; // Blanco en modo oscuro, gris oscuro en modo claro
       case 'Completadas':
-        return '#ffffff';
+        return isDark ? '#22c55e' : '#16a34a'; // Verde claro/oscuro
       case 'En proceso':
-        return '#ffffff';
+        return isDark ? '#f97316' : '#ea580c'; // Naranja claro/oscuro
       default:
         return isDark ? '#ffffff' : '#1f2937';
     }
@@ -186,7 +186,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   ngAfterViewInit(): void {
     // Iniciar animación de entrada
     this.animateCardEntrance();
-    
+
     // Iniciar las animaciones geométricas después de la entrada
     setTimeout(() => {
       this.startGeometricAnimation();
@@ -197,7 +197,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     if (!this.cardElement) return;
 
     const cardEl = this.cardElement.nativeElement;
-    
+
     // Configurar estado inicial
     cardEl.style.opacity = '0';
     cardEl.style.transform = 'translateY(20px) scale(0.96)';
@@ -224,31 +224,31 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   private animateBodyContent(): void {
     // Crear partículas flotantes
     this.createBodyParticles();
-    
+
     // Animar el número con efecto de conteo
     this.animateValueCounter();
   }
 
   private createBodyParticles(): void {
     if (!this.bodyParticles) return;
-    
+
     const container = this.bodyParticles.nativeElement;
     const particleCount = 3;
-    
+
     for (let i = 0; i < particleCount; i++) {
       const particle = document.createElement('div');
       particle.className = 'absolute w-1 h-1 rounded-full opacity-30';
-      
+
       // Color basado en el tema de la carta
       const color = this.getParticleColor();
       particle.style.backgroundColor = color;
-      
+
       // Posición aleatoria
       particle.style.left = Math.random() * 80 + 10 + '%';
       particle.style.top = Math.random() * 60 + 20 + '%';
-      
+
       container.appendChild(particle);
-      
+
       // Animar partícula flotante
       this.animateParticle(particle, i);
     }
@@ -265,7 +265,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
 
   private animateParticle(particle: HTMLElement, index: number): void {
     if (this.isDestroyed) return;
-    
+
     // Crear una animación continua suave usando loop
     const animation = animate(particle, {
       translateY: [
@@ -293,14 +293,14 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
       delay: index * 300, // Escalonar las animaciones
       autoplay: true
     });
-    
+
     // Almacenar la animación para limpieza
     this.animationInstances.push(animation);
   }
 
   private animateValueCounter(): void {
     if (!this.valueNumber) return;
-    
+
     const numberEl = this.valueNumber.nativeElement;
     const targetValue = parseInt(this.data.value);
     let currentValue = 0;
@@ -308,13 +308,13 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     const steps = 30;
     const increment = targetValue / steps;
     const stepDuration = duration / steps;
-    
+
     const counter = setInterval(() => {
       if (this.isDestroyed) {
         clearInterval(counter);
         return;
       }
-      
+
       currentValue += increment;
       if (currentValue >= targetValue) {
         currentValue = targetValue;
@@ -355,14 +355,14 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     const shape = document.createElement('div');
     const shapeType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
     const size = 12 + Math.random() * 20; // Tamaño más grande: entre 12-32px
-    
+
     // Posición inicial aleatoria en el fondo
     const startX = Math.random() * (width - size);
     const startY = height + size + Math.random() * 20;
-    
+
     // Configurar la forma según el tipo
     this.setupShapeGeometry(shape, shapeType, size);
-    
+
     // Posicionar la forma
     shape.style.left = `${startX}px`;
     shape.style.top = `${startY}px`;
@@ -377,9 +377,9 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     this.animateShape(shape, width, height, size, immediateStart);
   }  private setupShapeGeometry(shape: HTMLElement, shapeType: string, size: number): void {
     shape.className = `geometric-shape ${shapeType}`;
-    
+
     const opacity = 0.5 + Math.random() * 0.3; // Opacidad más intensa: 0.5-0.8
-    
+
     switch (shapeType) {
       case 'circle':
         shape.style.width = `${size}px`;
@@ -388,7 +388,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
         shape.style.borderRadius = '50%';
         shape.style.boxShadow = '0 2px 8px rgba(255, 255, 255, 0.3)'; // Sombra blanca sutil
         break;
-        
+
       case 'triangle':
         const triangleSize = size * 0.8;
         shape.style.width = '0';
@@ -398,7 +398,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
         shape.style.borderBottom = `${triangleSize}px solid rgba(255, 255, 255, ${opacity})`;
         shape.style.filter = 'drop-shadow(0 2px 4px rgba(255, 255, 255, 0.2))'; // Sombra para triángulo
         break;
-        
+
       case 'rectangle':
         const rectWidth = size * 1.2;
         const rectHeight = size * 0.8;
@@ -419,46 +419,46 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     const drift = (Math.random() - 0.5) * (containerWidth * 0.4); // Deriva lateral más pronunciada
     const duration = 5000 + Math.random() * 3000; // Duración: 5-8 segundos
     const delay = 0; // Sin delay - inicio completamente inmediato
-    
+
     // Opacidad pico más intensa en el medio del recorrido
     const peakOpacity = 0.6 + Math.random() * 0.3; // Opacidad pico: 0.6-0.9
 
     const animation = animate(shape, {
       keyframes: [
-        { 
-          translateY: 0, 
-          translateX: 0, 
+        {
+          translateY: 0,
+          translateX: 0,
           opacity: 0.2, // Comenzar con poca opacidad
           scale: 0.7,
-          rotate: 0 
+          rotate: 0
         },
-        { 
-          translateY: -(containerHeight * 0.25), 
-          translateX: drift * 0.2, 
-          opacity: peakOpacity * 0.7, 
+        {
+          translateY: -(containerHeight * 0.25),
+          translateX: drift * 0.2,
+          opacity: peakOpacity * 0.7,
           scale: 1.0,
-          rotate: Math.random() * 60 - 30 
+          rotate: Math.random() * 60 - 30
         },
-        { 
-          translateY: -(containerHeight * 0.5), 
-          translateX: drift * 0.5, 
+        {
+          translateY: -(containerHeight * 0.5),
+          translateX: drift * 0.5,
           opacity: peakOpacity, // Máxima opacidad en el centro
           scale: 1.2,
-          rotate: Math.random() * 120 - 60 
+          rotate: Math.random() * 120 - 60
         },
-        { 
-          translateY: -(containerHeight * 0.75), 
-          translateX: drift * 0.8, 
-          opacity: peakOpacity * 0.8, 
+        {
+          translateY: -(containerHeight * 0.75),
+          translateX: drift * 0.8,
+          opacity: peakOpacity * 0.8,
           scale: 1.1,
-          rotate: Math.random() * 180 - 90 
+          rotate: Math.random() * 180 - 90
         },
-        { 
-          translateY: endY, 
-          translateX: drift, 
+        {
+          translateY: endY,
+          translateX: drift,
           opacity: 0, // Desaparecer al final
           scale: 0.8,
-          rotate: Math.random() * 360 - 180 
+          rotate: Math.random() * 360 - 180
         }
       ],
       duration: duration,
@@ -501,7 +501,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   private cleanupAnimations(): void {
     // Marcar como destruido primero
     this.isDestroyed = true;
-    
+
     // Pausar todas las animaciones
     this.animationInstances.forEach(animation => {
       try {
@@ -516,10 +516,10 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
         console.warn('Error cleaning animation:', e);
       }
     });
-    
+
     // Limpiar arrays
     this.animationInstances = [];
-    
+
     // Remover figuras del DOM de forma segura
     this.shapes.forEach(shape => {
       try {
@@ -539,7 +539,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
     if (!target) return;
 
     target.style.willChange = 'transform';
-    
+
     animate(target, {
       scale: [1, 1.02],
       duration: 160,
@@ -561,7 +561,7 @@ export class AnimatedStatsCardComponent implements OnInit, OnDestroy, AfterViewI
   onCardHoverLeave(event: MouseEvent): void {
     const target = event.currentTarget as HTMLElement;
     if (!target) return;
-    
+
     animate(target, {
       scale: 1,
       duration: 140,

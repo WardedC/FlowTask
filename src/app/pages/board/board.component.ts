@@ -1,11 +1,11 @@
 ﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  CdkDragDrop, 
-  moveItemInArray, 
-  transferArrayItem, 
-  CdkDrag, 
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+  CdkDrag,
   CdkDropList,
   CdkDragPreview,
   CdkDragPlaceholder,
@@ -26,7 +26,7 @@ type Column = { id: string; title: string; cards: Card[] };
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoardComponent {
-  
+
   // Flag para optimizar estilos durante el drag
   isDragging = false;
 
@@ -48,14 +48,14 @@ export class BoardComponent {
 
   // Configuración de temas por columna (se ciclan para nuevas columnas)
   private readonly columnThemes = [
-    { color: 'ft-crimson', name: 'crimson' },
-    { color: 'ft-amber', name: 'amber' },
-    { color: 'ft-turquoise', name: 'turquoise' },
+    { color: '#D7263D', name: 'crimson' },    // Rojo/Crimson
+    { color: '#FFB400', name: 'amber' },      // Ámbar/Amarillo
+    { color: '#2EC4B6', name: 'turquoise' },  // Turquesa
   ];
 
   // Contador para generar IDs únicos de columnas
   private columnIdCounter = this.columns.length;
-  
+
   // Contador para generar IDs únicos de tarjetas
   private cardIdCounter = 8; // Empezar después de las tarjetas existentes (c1-c7)
 
@@ -93,12 +93,12 @@ export class BoardComponent {
    */
   addNewColumn() {
     const listName = this.newListName.trim();
-    
+
     // Si el usuario no ingresa un nombre, no crear la lista
     if (!listName) {
       return;
     }
-    
+
     const newColumnId = `column-${this.columnIdCounter++}`;
     const newColumn: Column = {
       id: newColumnId,
@@ -106,7 +106,7 @@ export class BoardComponent {
       cards: []
     };
     this.columns.push(newColumn);
-    
+
     // Cerrar modal y limpiar
     this.showNewListModal = false;
     this.newListName = '';
@@ -137,12 +137,12 @@ export class BoardComponent {
    */
   addNewTask() {
     const title = this.newTaskTitle.trim();
-    
+
     // Validar que hay título y columna seleccionada
     if (!title || this.selectedColumnIndex === null) {
       return;
     }
-    
+
     const newCardId = `c${this.cardIdCounter++}`;
     const newCard: Card = {
       id: newCardId,
@@ -150,9 +150,9 @@ export class BoardComponent {
       desc: this.newTaskDesc.trim() || undefined,
       checked: false
     };
-    
+
     this.columns[this.selectedColumnIndex].cards.push(newCard);
-    
+
     // Cerrar modal y limpiar
     this.showNewTaskModal = false;
     this.newTaskTitle = '';
@@ -167,9 +167,9 @@ export class BoardComponent {
     if (!this.searchQuery.trim()) {
       return cards;
     }
-    
+
     const query = this.searchQuery.toLowerCase().trim();
-    return cards.filter(card => 
+    return cards.filter(card =>
       card.title.toLowerCase().includes(query) ||
       (card.desc && card.desc.toLowerCase().includes(query))
     );
@@ -253,7 +253,7 @@ export class BoardComponent {
     this.isDragging = true;
     // Agregar clase al body para simplificar estilos globales y mejorar performance
     document.body.classList.add('is-dragging');
-    
+
     // 🚀 Forzar reflow para asegurar que los estilos se apliquen inmediatamente
     // Esto previene el "flicker" inicial del drag
     void document.body.offsetHeight;
@@ -271,10 +271,15 @@ export class BoardComponent {
     });
   }
 
-  // Métodos helper para clases CSS dinámicas
+  // Métodos helper para colores dinámicos
+  getColumnColor(index: number): string {
+    const themeIndex = index % this.columnThemes.length;
+    return this.columnThemes[themeIndex].color;
+  }
+
   getColumnColorClass(index: number): string {
-    const themeIndex = index % this.columnThemes.length; // Cicla los colores
-    return `bg-${this.columnThemes[themeIndex].color}`;
+    // Ya no se usa, pero lo mantenemos por compatibilidad
+    return '';
   }
 
   getColumnBadgeClass(index: number): string {
@@ -283,24 +288,31 @@ export class BoardComponent {
   }
 
   getColumnHoverClass(index: number): string {
-    const themeIndex = index % this.columnThemes.length; // Cicla los colores
-    return `hover:text-${this.columnThemes[themeIndex].color}`;
+    // Ya no se usa con clases dinámicas
+    return '';
   }
 
   getColumnBarClass(index: number): string {
-    const themeIndex = index % this.columnThemes.length; // Cicla los colores
-    return `bg-${this.columnThemes[themeIndex].color}`;
+    // Ya no se usa, se reemplaza por getColumnColor
+    return '';
   }
 
   getColumnGripClass(index: number): string {
-    const themeIndex = index % this.columnThemes.length; // Cicla los colores
-    return `group-hover:text-${this.columnThemes[themeIndex].color}`;
+    // Ya no se usa
+    return '';
+  }
+
+  getColumnAvatarStyle(index: number): { [key: string]: string } {
+    const themeIndex = index % this.columnThemes.length;
+    const theme = this.columnThemes[themeIndex];
+    const nextTheme = this.columnThemes[(themeIndex + 1) % this.columnThemes.length];
+    return {
+      'background': `linear-gradient(to bottom right, ${theme.color}, ${nextTheme.color})`
+    };
   }
 
   getColumnAvatarClass(index: number): string {
-    const themeIndex = index % this.columnThemes.length; // Cicla los colores
-    const theme = this.columnThemes[themeIndex];
-    const nextTheme = this.columnThemes[(themeIndex + 1) % this.columnThemes.length];
-    return `bg-gradient-to-br from-${theme.color} to-${nextTheme.color}`;
+    // Mantenemos para compatibilidad pero retornamos vacío
+    return '';
   }
 }
